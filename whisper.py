@@ -34,10 +34,13 @@ def transcribe_audio(audio_path):
 
 if __name__ == "__main__":
     import sys
+
+    # Check command line arguments
     if len(sys.argv) != 2:
         print("Usage: python3 whisper.py <audio_file_path>")
         sys.exit(1)
 
+    # Get the audio file path from command line arguments
     audio_file_path = sys.argv[1]
     transcription = transcribe_audio(audio_file_path)
     print("Transcription:", transcription)
