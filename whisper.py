@@ -44,3 +44,7 @@ if __name__ == "__main__":
     audio_file_path = sys.argv[1]
     transcription = transcribe_audio(audio_file_path)
     print("Transcription:", transcription)
+
+    # save the transcription to a file
+    with open("transcription.txt", "w") as f:
+        f.write(transcription)
