@@ -7,6 +7,23 @@ from datetime import datetime, timedelta
 
 # === Extract creation time using ffprobe ===
 def get_video_creation_time(video_path):
+    """
+	Finds the creation time of a video file using ffprobe.
+
+    This function should be adjusted to find the actual timestamp of the video file. E.g. if the video was recorded on a camera, 
+    it should return the timestamp of when the video was recorded, not when it was created on disk.
+     
+	Args:
+        video_path (str): path to the video file.
+	Returns:
+		datetime: creation time of the video.
+
+	Author: Alex Foster
+	Date: 2023-10-01
+	"""
+
+    ##TODO: This function should be adjusted to find the actual timestamp of the video file.
+
     try:
         result = subprocess.run(
             [
@@ -27,6 +44,17 @@ def get_video_creation_time(video_path):
 
 # === Main frame extraction ===
 def framer(video, video_path):
+    """
+	Extract frames from a video file and save them as images in a folder named 'frames' along with the meta data .json files.
+	Args:
+		video (an mp4 file).
+        video_path (str): path to the video file.
+	Returns:
+		None: A file will be created in the 'frames' directory for each frame extracted + their metadata.
+
+	Author: Alex Foster
+	Date: 2023-10-01
+	"""
 
     os.makedirs("frames", exist_ok=True)
 

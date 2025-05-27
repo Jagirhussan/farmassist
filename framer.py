@@ -5,6 +5,16 @@ import os
 
 
 def framer(video):
+	"""
+	Extract frames from a video file and save them as images in a folder named 'frames'.
+	Args:
+		video (an mp4 file).
+	Returns:
+		None: A file will be created in the 'frames' directory for each frame extracted.
+
+	Author: Alex Foster
+	Date: 2023-10-01
+	"""
 
 	os.makedirs("frames", exist_ok=True)
 
@@ -13,16 +23,14 @@ def framer(video):
 	frame_count = 0
 
 	while video.isOpened():
+		ret, frame = video.read()
+		if not ret: 
+			break
 
-    		ret, frame = video.read()
+		if frame_count % int(fps) == 0:  # Save 1 frame/sec
+			cv2.imwrite(f"frames/frame_{frame_count}.jpg", frame)
 
-    		if not ret: break
-
-	    	if frame_count % int(fps) == 0:  # Save 1 frame/sec
-
-        		cv2.imwrite(f"frames/frame_{frame_count}.jpg", frame)
-
-    		frame_count +=1
+		frame_count +=1
 
 	video.release()
 	return
