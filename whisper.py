@@ -1,6 +1,6 @@
 # this file calls whisper and returns the transcription
 from transformers import WhisperProcessor, WhisperForConditionalGeneration
-from dataset import load_dataset
+from datasets import load_dataset
 
 def transcribe_audio(audio_path):
     """
