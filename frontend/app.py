@@ -3,7 +3,10 @@ import requests
 
 app = Flask(__name__)
 
-BACKEND_URL = "http://localhost:5000/ask_llm"  # Backend running on your laptop
+# the changed port
+BACKEND_URL = "http://localhost:5050/ask_llm"  # Backend running on your laptop
+
+
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
