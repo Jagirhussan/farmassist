@@ -8,8 +8,6 @@ app = FastAPI()
 JETSON_URL = "http://172.23.98.136:8000/run_llm"
 
 
-class Prompt(BaseModel):
-    prompt: str
 
 @app.post("/ask_llm")  # Must match what the frontend calls
 async def ask_llm(request: Request):
