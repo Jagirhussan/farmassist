@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Farm Assist</title>
   <style>
     body {
@@ -19,10 +20,12 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     textarea, input[type="submit"] {
-      width: 80%;
+      width: 100%;
       padding: 12px;
       margin-top: 10px;
       font-size: 16px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
     }
     .output-box {
       margin-top: 20px;
@@ -30,6 +33,7 @@
       background-color: #e8f4e5;
       border: 1px solid #b2d8b2;
       border-radius: 5px;
+      white-space: pre-wrap;
     }
   </style>
 </head>
@@ -37,17 +41,17 @@
   <div class="container">
     <h1>Farm Assist</h1>
     <form method="POST">
-      <label for="input_text">Enter something:</label><br>
-      <textarea name="input_text" rows="4" placeholder="Type here...">{{ input }}</textarea>
+      <label for="input_text">Enter a prompt:</label><br>
+      <textarea id="input_text" name="input_text" rows="4" placeholder="Type your message here...">{{ input }}</textarea>
       <input type="submit" value="Submit">
     </form>
 
     {% if output %}
     <div class="output-box">
-      <strong>Output:</strong> {{ output }}
+      <strong>Response:</strong><br>
+      {{ output }}
     </div>
     {% endif %}
   </div>
 </body>
 </html>
-
