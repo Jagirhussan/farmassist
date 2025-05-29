@@ -15,7 +15,12 @@ async def run_llm(request: Request):
 	#get the response from the LLM (this needs to be edited)
 	response = {"output": f"LLM processed: {prompt}"}
 	
-	return response
+	
+	#debugging checking to make sure this is working
+	print(f"Recieved prompt: {prompt}") 
+	return {"output": f"LLM processed: {prompt}"}
+	
+	#return response
 	
 if __name__ == "__main__":
 	uvicorn.run(app, host = "0.0.0.0", port = 8000)
