@@ -11,6 +11,8 @@ JETSON_URL = "http://172.23.98.136:8000/run_llm"
 async def ask_llm(request: Request):
     data = await request.json()
     prompt = data.get("prompt", "")
+    
+    #call llm here i guess?
 
     print(f"[Backend] Got prompt from frontend: {prompt}")
     

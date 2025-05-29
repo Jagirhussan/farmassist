@@ -15,7 +15,6 @@ def home():
 		print(f"[Frontend] User input: {user_input}")
 		try:
 			res = requests.post(BACKEND_URL, json={"prompt": user_input})
-			print(f"[Frontend] Raw backend response: {res.text}")  # Debug print
 			response_data = res.json()
 			print(f"[Frontend] Parsed backend response: {response_data}")
 			response = response_data.get("output", "No response from backend.")
