@@ -1,57 +1,315 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Farm Assist</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Poppins:wght@300;400&display=swap" rel="stylesheet" />
   <style>
     body {
+      margin: 0;
       font-family: 'Poppins', sans-serif;
-      margin: 40px;
-      background-color: #f5f5f5;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
     }
-    h1 {
-      color: #2c3e50;
+
+    /* Sidebar */
+    .sidebar {
+      width: 230px;
+      background-color: #66a88e;
+      color: black;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 30px 20px;
+      transition: width 0.3s ease; /* Smooth transition for width changes */
     }
-    .container {
-      max-width: 600px;
-      background: white;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+
+    .sidebar.closed {
+      width: 60px; /* Narrow sidebar when closed */
+      padding: 30px 10px; /* Adjust padding */
     }
-    textarea, input[type="submit"] {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
+
+    .sidebar .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      margin-top: 70px; /* Move the About Us and Info sections down */
+    }
+
+    .sidebar .nav-item {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      cursor: pointer;
+      justify-content: flex-start; /* Align to the left when sidebar is open */
+    }
+
+    .sidebar.closed .nav-item {
+      justify-content: center; /* Center icons when sidebar is closed */
+    }
+
+    .sidebar.closed .nav-item span {
+      display: none; /* Hide text when sidebar is closed */
+    }
+
+    .sidebar .nav-item img {
+      width: 24px;
+      margin-right: 12px;
+    }
+
+    .sidebar.closed .nav-item img {
+      margin-right: 0; /* Remove margin when sidebar is closed */
+    }
+
+    .sidebar .settings {
+      display: flex;
+      align-items: center;
+      font-size: 18px;
+      cursor: pointer;
+      justify-content: flex-start; /* Align to the left when sidebar is open */
+    }
+
+    .sidebar.closed .settings {
+      justify-content: center; /* Center icons when sidebar is closed */
+    }
+
+    .sidebar.closed .settings span {
+      display: none; /* Hide text when sidebar is closed */
+    }
+
+    .sidebar .settings img {
+      width: 24px;
+      margin-right: 12px;
+    }
+
+    .sidebar.closed .settings img {
+      margin-right: 0; /* Remove margin when sidebar is closed */
+    }
+
+    .toggle-sidebar {
+      cursor: pointer;
+      background: none;
+      border: none;
+      position: absolute;
+      top: 35px; /* Moved down by 10px */
+      left: 20px; /* Default position */
+      transition: left 0.3s ease, top 0.3s ease; /* Smooth transition for position changes */
+    }
+
+    .sidebar:not(.closed) .toggle-sidebar {
+      left: 15px; /* Move 5px to the left when sidebar is open */
+    }
+
+    .toggle-sidebar img {
+      width: 22px; /* Ensure consistent size with other icons */
+      height: 22px; /* Ensure proportional scaling */
+    }
+
+    /* Main */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background-color: #bddbd3;
+      height: 80px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 0 40px;
+    }
+
+    .header .logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 36px; /* Increased font size for larger logo */
+      margin-right: 10px;
+    }
+
+    .header img {
+      height: 60px; /* Increased logo size */
+    }
+
+    .chat-area {
+      flex: 1;
+      background-color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 20px;
+      overflow-y: auto; /* Enable scrolling for long conversations */
+      max-height: calc(100vh - 80px); /* Ensure it fits within the viewport minus the header */
+    }
+
+    .chat-message {
+      background-color: #f1f1f1;
+      padding: 10px 15px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      max-width: calc(100% - 200px); /* Default width */
       font-size: 16px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
+      font-family: 'Poppins', sans-serif;
     }
-    .output-box {
-      margin-top: 20px;
-      padding: 12px;
-      background-color: #e8f4e5;
-      border: 1px solid #b2d8b2;
-      border-radius: 5px;
-      white-space: pre-wrap;
+
+    .chat-message.user {
+      background-color: #dce5e1; /* Slightly darker color for user messages */
+      align-self: flex-end;
+      margin-left: auto; /* Align to the right */
+      margin-right: 20px; /* Match the padding of the typing bar */
+    }
+
+    .chat-message.bot {
+      align-self: flex-start;
+      margin-right: auto; /* Align to the left */
+      margin-left: 20px; /* Match the padding of the typing bar */
+    }
+
+    .typing-indicator {
+      font-size: 16px;
+      font-family: 'Poppins', sans-serif;
+      color: #888;
+      margin-bottom: 10px;
+      align-self: flex-start;
+      margin-left: 20px; /* Match the padding of the typing bar */
+    }
+
+    .chat-input-container {
+      display: flex;
+      align-items: center;
+      background-color: #dfe9e6;
+      padding: 14px 20px;
+      border-radius: 15px;
+      max-width: calc(100% - 125px); /* Increased width */
+      width: 100%;
+      margin: 0 auto 30px auto;
+      transition: max-width 0.3s ease; /* Smooth transition for width changes */
+    }
+
+    .sidebar.closed ~ .main .chat-input-container {
+      max-width: calc(100% - 30px); /* Wider width when sidebar is closed */
+    }
+
+    .chat-input-container input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 16px;
+      font-family: 'Poppins', sans-serif;
+      outline: none;
+    }
+
+    .chat-input-container button {
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .chat-input-container button img {
+      width: 28px; /* Increased size of the send icon */
     }
   </style>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const sidebar = document.querySelector(".sidebar");
+      const toggleButton = document.querySelector(".toggle-sidebar");
+      const newChatButton = document.querySelector(".nav-item img");
+      const inputField = document.querySelector(".chat-input-container input");
+      const chatArea = document.querySelector(".chat-area");
+
+      toggleButton.addEventListener("click", function () {
+        sidebar.classList.toggle("closed"); // Toggle the "closed" class
+      });
+
+      newChatButton.addEventListener("click", function () {
+        // Clear input, output, and history
+        inputField.value = "";
+        chatArea.innerHTML = ""; // Clear all messages
+      });
+
+      const form = document.querySelector("form");
+      form.addEventListener("submit", function (e) {
+        e.preventDefault(); // Prevent form submission
+
+        const userMessage = inputField.value.trim();
+        if (userMessage) {
+          // Add user message to chat area
+          const userMessageElement = document.createElement("div");
+          userMessageElement.className = "chat-message user";
+          userMessageElement.textContent = userMessage;
+          chatArea.appendChild(userMessageElement);
+
+          // Clear input field
+          inputField.value = "";
+
+          // Add typing indicator
+          const typingIndicator = document.createElement("div");
+          typingIndicator.className = "typing-indicator";
+          typingIndicator.textContent = "...";
+          chatArea.appendChild(typingIndicator);
+
+          // Simulate bot response after a delay
+          setTimeout(() => {
+            chatArea.removeChild(typingIndicator); // Remove typing indicator
+h
+            const botMessageElement = document.createElement("div");
+            botMessageElement.className = "chat-message bot";
+            botMessageElement.textContent = "This is a simulated response.";
+            chatArea.appendChild(botMessageElement);
+          }, 2000); // Simulate 2-second delay
+        }
+      });
+    });
+  </script>
 </head>
 <body>
-  <div class="container">
-    <h1>Farm Assist</h1>
-    <form method="POST">
-      <label for="input_text">Enter a prompt:</label><br>
-      <textarea id="input_text" name="input_text" rows="4" placeholder="Type your message here...">{{ input }}</textarea>
-      <input type="submit" value="Submit">
-    </form>
 
-    {% if output %}
-    <div class="output-box">
-      <strong>Response:</strong><br>
-      {{ output }}
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <button class="toggle-sidebar">
+      <img src="static/images/sidebar_close.png" alt="Toggle Sidebar" />
+    </button>
+    <div class="nav">
+      <div class="nav-item">
+        <img src="static/images/newchaticon.png" alt="New Chat" />
+        <span>New chat</span>
+      </div>
+      <div class="nav-item">
+        <img src="static/images/info_icon.png" alt="About Us" />
+        <span>About Us</span>
+      </div>
     </div>
-    {% endif %}
+    <div class="settings">
+      <img src="static/images/settings_icon.png" alt="Settings" />
+      <span>Settings</span>
+    </div>
   </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <!-- Header -->
+    <div class="header">
+      <span class="logo-text">FARM ASSIST</span>
+      <img src="static/images/farm_assist_logo.png" alt="Farm Logo" />
+    </div>
+
+    <!-- Chat Area -->
+    <div class="chat-area">
+      <!-- Messages will appear here -->
+    </div>
+
+    <!-- Chat Input -->
+    <form method="POST" action="/process">
+      <div class="chat-input-container">
+        <input type="text" name="input_text" placeholder="Ask anything about your farm ..." />
+        <button type="submit">
+          <img src="static/images/send_icon.png" alt="Send" />
+        </button>
+      </div>
+    </form>
+  </div>
+
 </body>
 </html>
+
