@@ -11,8 +11,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],  # Frontend origin
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all HTTP methods
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["POST"],
+    allow_headers=["Content-Type"],
 )
 
 @app.post("/ask_llm")
