@@ -235,48 +235,61 @@
       });
 
       const form = document.querySelector("form");
-
       form.addEventListener("submit", function (e) {
-        e.preventDefault();
+        e.preventDefault(); // Prevent form submission
 
         const userMessage = inputField.value.trim();
         if (userMessage) {
+          // Add user message to chat area
           const userMessageElement = document.createElement("div");
           userMessageElement.className = "chat-message user";
           userMessageElement.textContent = userMessage;
           chatArea.appendChild(userMessageElement);
+
+          // Clear input field
           inputField.value = "";
 
+          // Add typing indicator
           const typingIndicator = document.createElement("div");
           typingIndicator.className = "typing-indicator";
           typingIndicator.textContent = "...";
           chatArea.appendChild(typingIndicator);
 
-          fetch("http://localhost:5050/ask_llm", {
-            method: "POST",
+          // Make AJAX request to backend
+          fetch("http://172.23.104.234:5050/ask_llm", { // Correct backend URL
+            method: "POST", // Ensure the method is POST
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ prompt: userMessage }),
+            body: JSON.stringify({ prompt: userMessage }), // Send the user input as JSON
           })
-            .then((response) => {
-              console.log("Response status:", response.status);
-              return response.json();
-            })
+            .then((response) => response.json())
             .then((data) => {
               console.log("Backend response:", data);
               chatArea.removeChild(typingIndicator);
 
-              const botMessageElement = document.createElement("div");
-              botMessageElement.className = "chat-message bot";
-              botMessageElement.textContent = data.output || "No response from backend.";
-              chatArea.appendChild(botMessageElement);
+              if (data.output) {
+                // Add bot response to chat area
+                const botMessageElement = document.createElement("div");
+                botMessageElement.className = "chat-message bot";
+                botMessageElement.textContent = data.output;
+                chatArea.appendChild(botMessageElement);
+              } else {
+                // Add error message to chat area
+                const errorMessageElement = document.createElement("div");
+                errorMessageElement.className = "chat-message bot";
+                errorMessageElement.textContent = "No response from backend.";
+                chatArea.appendChild(errorMessageElement);
+              }
+
+              // Scroll to the bottom of the chat area
               chatArea.scrollTop = chatArea.scrollHeight;
             })
             .catch((error) => {
               console.error("Fetch error:", error);
               chatArea.removeChild(typingIndicator);
 
+              // Add error message to chat area
               const errorMessageElement = document.createElement("div");
               errorMessageElement.className = "chat-message bot";
               errorMessageElement.textContent = `Error: ${error.message}`;
