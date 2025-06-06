@@ -6,6 +6,17 @@ import uvicorn
 # Create a FastAPI app instance
 app = FastAPI()
 
+
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Or ["http://localhost:3000"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # URL of the Jetson server to handle LLM requests
 JETSON_URL = "http://172.23.98.136:8000/run_llm"
 
