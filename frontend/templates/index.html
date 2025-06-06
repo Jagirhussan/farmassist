@@ -219,20 +219,8 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      const sidebar = document.querySelector(".sidebar");
-      const toggleButton = document.querySelector(".toggle-sidebar");
-      const newChatButton = document.querySelector(".nav-item img");
       const inputField = document.querySelector(".chat-input-container input");
       const chatArea = document.querySelector(".chat-area");
-
-      toggleButton.addEventListener("click", function () {
-        sidebar.classList.toggle("closed");
-      });
-
-      newChatButton.addEventListener("click", function () {
-        inputField.value = "";
-        chatArea.innerHTML = "";
-      });
 
       const form = document.querySelector("form");
       form.addEventListener("submit", function (e) {
@@ -255,15 +243,20 @@
           typingIndicator.textContent = "...";
           chatArea.appendChild(typingIndicator);
 
-          // Make AJAX request to backend
+          // Make POST request to backend
           fetch("http://172.23.104.234:5050/ask_llm", { // Correct backend URL
-            method: "POST", // Ensure the method is POST
+            method: "POST", // Use POST method
             headers: {
-              "Content-Type": "application/json",
+              "Content-Type": "application/json", // Set Content-Type header
             },
-            body: JSON.stringify({ prompt: userMessage }), // Send the user input as JSON
+            body: JSON.stringify({ prompt: userMessage }), // Send user input as JSON
           })
-            .then((response) => response.json())
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              return response.json();
+            })
             .then((data) => {
               console.log("Backend response:", data);
               chatArea.removeChild(typingIndicator);
