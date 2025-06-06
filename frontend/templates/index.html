@@ -3,11 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <title>Farm Assist</title>
+
+  <!-- Include Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Lovelo:wght@400&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Poppins:wght@300;400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=ABeeZee&display=swap" rel="stylesheet" />
+
   <style>
     body {
       margin: 0;
-      font-family: 'Poppins', sans-serif;
+      font-family: 'AbeeZee', sans-serif;
       display: flex;
       height: 100vh;
       overflow: hidden;
@@ -22,19 +27,19 @@
       flex-direction: column;
       justify-content: space-between;
       padding: 30px 20px;
-      transition: width 0.3s ease; /* Smooth transition for width changes */
+      transition: width 0.3s ease;
     }
 
     .sidebar.closed {
-      width: 60px; /* Narrow sidebar when closed */
-      padding: 30px 10px; /* Adjust padding */
+      width: 60px;
+      padding: 30px 10px;
     }
 
     .sidebar .nav {
       display: flex;
       flex-direction: column;
       gap: 30px;
-      margin-top: 70px; /* Move the About Us and Info sections down */
+      margin-top: 70px;
     }
 
     .sidebar .nav-item {
@@ -42,15 +47,15 @@
       align-items: center;
       font-size: 14px;
       cursor: pointer;
-      justify-content: flex-start; /* Align to the left when sidebar is open */
+      justify-content: flex-start;
     }
 
     .sidebar.closed .nav-item {
-      justify-content: center; /* Center icons when sidebar is closed */
+      justify-content: center;
     }
 
     .sidebar.closed .nav-item span {
-      display: none; /* Hide text when sidebar is closed */
+      display: none;
     }
 
     .sidebar .nav-item img {
@@ -59,7 +64,7 @@
     }
 
     .sidebar.closed .nav-item img {
-      margin-right: 0; /* Remove margin when sidebar is closed */
+      margin-right: 0;
     }
 
     .sidebar .settings {
@@ -67,15 +72,15 @@
       align-items: center;
       font-size: 18px;
       cursor: pointer;
-      justify-content: flex-start; /* Align to the left when sidebar is open */
+      justify-content: flex-start;
     }
 
     .sidebar.closed .settings {
-      justify-content: center; /* Center icons when sidebar is closed */
+      justify-content: center;
     }
 
     .sidebar.closed .settings span {
-      display: none; /* Hide text when sidebar is closed */
+      display: none;
     }
 
     .sidebar .settings img {
@@ -84,7 +89,7 @@
     }
 
     .sidebar.closed .settings img {
-      margin-right: 0; /* Remove margin when sidebar is closed */
+      margin-right: 0;
     }
 
     .toggle-sidebar {
@@ -92,21 +97,21 @@
       background: none;
       border: none;
       position: absolute;
-      top: 35px; /* Moved down by 10px */
-      left: 20px; /* Default position */
-      transition: left 0.3s ease, top 0.3s ease; /* Smooth transition for position changes */
+      top: 35px;
+      left: 20px;
+      transition: left 0.3s ease, top 0.3s ease;
     }
 
     .sidebar:not(.closed) .toggle-sidebar {
-      left: 15px; /* Move 5px to the left when sidebar is open */
+      left: 15px;
     }
 
     .toggle-sidebar img {
-      width: 22px; /* Ensure consistent size with other icons */
-      height: 22px; /* Ensure proportional scaling */
+      width: 22px;
+      height: 22px;
     }
 
-    /* Main */
+    /* Main content */
     .main {
       flex: 1;
       display: flex;
@@ -123,13 +128,14 @@
     }
 
     .header .logo-text {
-      font-family: 'Playfair Display', serif;
-      font-size: 36px; /* Increased font size for larger logo */
+      font-family: 'ABeeZee', sans-serif;
+      font-size: 36px;
       margin-right: 10px;
     }
 
     .header img {
-      height: 60px; /* Increased logo size */
+      height: 60px;
+      margin-bottom: 10px;
     }
 
     .chat-area {
@@ -139,8 +145,8 @@
       flex-direction: column;
       justify-content: flex-end;
       padding: 20px;
-      overflow-y: auto; /* Enable scrolling for long conversations */
-      max-height: calc(100vh - 80px); /* Ensure it fits within the viewport minus the header */
+      overflow-y: auto;
+      max-height: calc(100vh - 80px);
     }
 
     .chat-message {
@@ -148,22 +154,22 @@
       padding: 10px 15px;
       border-radius: 10px;
       margin-bottom: 10px;
-      max-width: calc(100% - 200px); /* Default width */
+      max-width: calc(100% - 200px);
       font-size: 16px;
       font-family: 'Poppins', sans-serif;
     }
 
     .chat-message.user {
-      background-color: #dce5e1; /* Slightly darker color for user messages */
+      background-color: #dce5e1;
       align-self: flex-end;
-      margin-left: auto; /* Align to the right */
-      margin-right: 20px; /* Match the padding of the typing bar */
+      margin-left: auto;
+      margin-right: 20px;
     }
 
     .chat-message.bot {
       align-self: flex-start;
-      margin-right: auto; /* Align to the left */
-      margin-left: 20px; /* Match the padding of the typing bar */
+      margin-right: auto;
+      margin-left: 20px;
     }
 
     .typing-indicator {
@@ -172,7 +178,7 @@
       color: #888;
       margin-bottom: 10px;
       align-self: flex-start;
-      margin-left: 20px; /* Match the padding of the typing bar */
+      margin-left: 20px;
     }
 
     .chat-input-container {
@@ -181,14 +187,14 @@
       background-color: #dfe9e6;
       padding: 14px 20px;
       border-radius: 15px;
-      max-width: calc(100% - 125px); /* Increased width */
+      max-width: calc(100% - 125px);
       width: 100%;
       margin: 0 auto 30px auto;
-      transition: max-width 0.3s ease; /* Smooth transition for width changes */
+      transition: max-width 0.3s ease;
     }
 
     .sidebar.closed ~ .main .chat-input-container {
-      max-width: calc(100% - 30px); /* Wider width when sidebar is closed */
+      max-width: calc(100% - 120px);
     }
 
     .chat-input-container input {
@@ -207,9 +213,10 @@
     }
 
     .chat-input-container button img {
-      width: 28px; /* Increased size of the send icon */
+      width: 28px;
     }
   </style>
+
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       const sidebar = document.querySelector(".sidebar");
@@ -219,97 +226,109 @@
       const chatArea = document.querySelector(".chat-area");
 
       toggleButton.addEventListener("click", function () {
-        sidebar.classList.toggle("closed"); // Toggle the "closed" class
+        sidebar.classList.toggle("closed");
       });
 
       newChatButton.addEventListener("click", function () {
-        // Clear input, output, and history
         inputField.value = "";
-        chatArea.innerHTML = ""; // Clear all messages
+        chatArea.innerHTML = "";
       });
 
       const form = document.querySelector("form");
+
       form.addEventListener("submit", function (e) {
-        e.preventDefault(); // Prevent form submission
+        e.preventDefault();
 
         const userMessage = inputField.value.trim();
         if (userMessage) {
-          // Add user message to chat area
           const userMessageElement = document.createElement("div");
           userMessageElement.className = "chat-message user";
           userMessageElement.textContent = userMessage;
           chatArea.appendChild(userMessageElement);
-
-          // Clear input field
           inputField.value = "";
 
-          // Add typing indicator
           const typingIndicator = document.createElement("div");
           typingIndicator.className = "typing-indicator";
           typingIndicator.textContent = "...";
           chatArea.appendChild(typingIndicator);
 
-          // Simulate bot response after a delay
-          setTimeout(() => {
-            chatArea.removeChild(typingIndicator); // Remove typing indicator
-h
-            const botMessageElement = document.createElement("div");
-            botMessageElement.className = "chat-message bot";
-            botMessageElement.textContent = "This is a simulated response.";
-            chatArea.appendChild(botMessageElement);
-          }, 2000); // Simulate 2-second delay
+          fetch("http://localhost:5050/ask_llm", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ prompt: userMessage }),
+          })
+            .then((response) => {
+              console.log("Response status:", response.status);
+              return response.json();
+            })
+            .then((data) => {
+              console.log("Backend response:", data);
+              chatArea.removeChild(typingIndicator);
+
+              const botMessageElement = document.createElement("div");
+              botMessageElement.className = "chat-message bot";
+              botMessageElement.textContent = data.output || "No response from backend.";
+              chatArea.appendChild(botMessageElement);
+              chatArea.scrollTop = chatArea.scrollHeight;
+            })
+            .catch((error) => {
+              console.error("Fetch error:", error);
+              chatArea.removeChild(typingIndicator);
+
+              const errorMessageElement = document.createElement("div");
+              errorMessageElement.className = "chat-message bot";
+              errorMessageElement.textContent = `Error: ${error.message}`;
+              chatArea.appendChild(errorMessageElement);
+            });
         }
       });
     });
   </script>
 </head>
 <body>
-
   <!-- Sidebar -->
   <div class="sidebar">
     <button class="toggle-sidebar">
-      <img src="static/images/sidebar_close.png" alt="Toggle Sidebar" />
+      <img src="../static/images/sidebar_close.png" alt="Toggle Sidebar" />
     </button>
     <div class="nav">
       <div class="nav-item">
-        <img src="static/images/newchaticon.png" alt="New Chat" />
+        <img src="../static/images/newchaticon.png" alt="New Chat" />
         <span>New chat</span>
       </div>
       <div class="nav-item">
-        <img src="static/images/info_icon.png" alt="About Us" />
+        <img src="../static/images/info_icon.png" alt="About Us" />
         <span>About Us</span>
       </div>
     </div>
     <div class="settings">
-      <img src="static/images/settings_icon.png" alt="Settings" />
+      <img src="../static/images/settings_icon.png" alt="Settings" />
       <span>Settings</span>
     </div>
   </div>
 
   <!-- Main Content -->
   <div class="main">
-    <!-- Header -->
     <div class="header">
       <span class="logo-text">FARM ASSIST</span>
-      <img src="static/images/farm_assist_logo.png" alt="Farm Logo" />
+      <img src="../static/images/farm_assist_logo.png" alt="Farm Logo" />
     </div>
 
-    <!-- Chat Area -->
     <div class="chat-area">
       <!-- Messages will appear here -->
     </div>
 
-    <!-- Chat Input -->
-    <form method="POST" action="/process">
+    <!-- ✅ FIXED: Removed method and action attributes to prevent default form POST -->
+    <form>
       <div class="chat-input-container">
         <input type="text" name="input_text" placeholder="Ask anything about your farm ..." />
         <button type="submit">
-          <img src="static/images/send_icon.png" alt="Send" />
+          <img src="../static/images/send_icon.png" alt="Send" />
         </button>
       </div>
     </form>
   </div>
-
 </body>
 </html>
-

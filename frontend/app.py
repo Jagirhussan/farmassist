@@ -4,8 +4,11 @@ import requests
 # Create a Flask app instance
 app = Flask(__name__)
 
-# URL of the backend service
-BACKEND_URL = "http://localhost:5050/ask_llm"  # Backend runs on port 5050
+
+JETSON_IP = "172.17.255.255"
+
+BACKEND_URL = "http://<JETSON_IP>:5050/ask_llm"
+
 
 # Helper function to handle errors and return readable messages
 def handle_error(error_message):

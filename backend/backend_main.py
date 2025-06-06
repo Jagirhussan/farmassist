@@ -29,7 +29,6 @@ async def ask_llm(request: Request):
         # error catching and debugging
         print(f"[Backend] Error calling Jetson: {e}")
         return {"output": f"Backend error: {e}"}
-    
 
 # Run the app if this script is executed directly, its on port 5050 and will be called on the frontend
 if __name__ == "__main__":
