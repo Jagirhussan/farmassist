@@ -12,7 +12,7 @@ class TestFramerPerformance(unittest.TestCase):
     """
 
     def test_ram_and_time(self):
-        video_path = "videos/earth_spinning.mp4"
+        video_path = "videos/alex2mins.mp4"
         self.assertTrue(os.path.exists(video_path), f"Video file '{video_path}' does not exist.")
 
         video = cv2.VideoCapture(video_path)
