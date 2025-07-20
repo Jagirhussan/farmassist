@@ -37,7 +37,6 @@ def process_frames_in_folder(folder_path, model, preprocess, device, collection_
         device: Torch device.
         collection_name (str): Name of the ChromaDB collection to store in.
     """
-    starttime = time.time()
     if not os.path.isdir(folder_path):
         raise ValueError(f"Provided path is not a directory: {folder_path}")
 
@@ -66,8 +65,7 @@ def process_frames_in_folder(folder_path, model, preprocess, device, collection_
 
         collection.add(ids=[frame_id], embeddings=[embedding], metadatas=[metadata])
         print(f"Embedded and stored: {image_file}")
-        elapsed_time = time.time() - starttime
-        print(f"Total Processing Time: {elapsed_time:.2f} seconds")
+
 
 
 if __name__ == "__main__":
@@ -85,4 +83,7 @@ if __name__ == "__main__":
     model = model.to(device)
 
     # Run processing
+    starttime = time.time()
     process_frames_in_folder(folder_path, model, preprocess, device)
+    elapsed_time = time.time() - starttime
+    print(f"Total Processing Time: {elapsed_time:.2f} seconds")
