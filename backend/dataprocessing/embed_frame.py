@@ -4,6 +4,8 @@ import os
 import json
 from PIL import Image
 import chromadb
+import time
+from memory_profiler import profile
 
 def embed_frame(frame_path, model, preprocess, device):
     """
@@ -23,7 +25,7 @@ def embed_frame(frame_path, model, preprocess, device):
         features = model.encode_image(img)
     return features.squeeze().cpu().numpy()
 
-
+@profile
 def process_frames_in_folder(folder_path, model, preprocess, device, collection_name="video_frames"):
     """
     Process all valid image frames in a folder and store their embeddings + metadata in ChromaDB.
@@ -35,6 +37,7 @@ def process_frames_in_folder(folder_path, model, preprocess, device, collection_
         device: Torch device.
         collection_name (str): Name of the ChromaDB collection to store in.
     """
+    starttime = time.time()
     if not os.path.isdir(folder_path):
         raise ValueError(f"Provided path is not a directory: {folder_path}")
 
@@ -63,6 +66,8 @@ def process_frames_in_folder(folder_path, model, preprocess, device, collection_
 
         collection.add(ids=[frame_id], embeddings=[embedding], metadatas=[metadata])
         print(f"Embedded and stored: {image_file}")
+        elapsed_time = time.time() - starttime
+        print(f"Total Processing Time: {elapsed_time:.2f} seconds")
 
 
 if __name__ == "__main__":
