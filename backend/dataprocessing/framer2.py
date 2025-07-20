@@ -5,6 +5,7 @@ import json
 import subprocess
 from datetime import datetime, timedelta
 from extract_time import get_video_creation_time
+import shutil
 
 # === Main frame extraction ===
 def framer(video, video_path):
@@ -19,7 +20,9 @@ def framer(video, video_path):
 	Author: Alex Foster
 	Date: 2023-10-01
 	"""
-
+    if os.path.exists("frames"):
+        # clear the directory if it exists
+        shutil.rmtree("frames")
     os.makedirs("frames", exist_ok=True)
 
     fps = video.get(cv2.CAP_PROP_FPS)
