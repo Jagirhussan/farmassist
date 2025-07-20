@@ -1,6 +1,7 @@
 # backend/llm_utils.py
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
+from video_query import get_video_context
 
 # Global variables to store the model (loaded once)
 tokenizer = None
@@ -16,21 +17,30 @@ def load_model():
         model = AutoModelForCausalLM.from_pretrained("stabilityai/stablelm-zephyr-3b")
         print("[LLM] Model loaded successfully!")
 
-def run_llm(prompt: str) -> str:
-    """Process a prompt with the loaded LLM model"""
+def run_llm(prompt: str, use_video_context: bool = True) -> str:
+    """Process a prompt with the loaded LLM model, optionally with video context"""
     load_model()  # Ensure model is loaded
     
     print(f"[LLM] Processing prompt: {prompt}")
     
     try:
+        # Get video context if requested
+        full_prompt = prompt
+        if use_video_context:
+            print("[LLM] Retrieving video context...")
+            video_context = get_video_context(prompt, n_results=3)
+            if "No relevant video context found" not in video_context:
+                full_prompt = f"{video_context}\n\nUser Question: {prompt}"
+                print(f"[LLM] Added video context to prompt")
+        
         # Tokenize the input
-        inputs = tokenizer(prompt, return_tensors="pt")
+        inputs = tokenizer(full_prompt, return_tensors="pt")
         
         # Generate response
         with torch.no_grad():
             outputs = model.generate(
                 **inputs,
-                max_length=inputs['input_ids'].shape[1] + 100,
+                max_length=inputs['input_ids'].shape[1] + 150,  # Longer for context
                 temperature=0.7,
                 do_sample=True,
                 pad_token_id=tokenizer.eos_token_id
@@ -40,7 +50,7 @@ def run_llm(prompt: str) -> str:
         response = tokenizer.decode(outputs[0], skip_special_tokens=True)
         
         # Remove the original prompt from the response
-        response = response[len(prompt):].strip()
+        response = response[len(full_prompt):].strip()
         
         return response
     
