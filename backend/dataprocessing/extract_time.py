@@ -31,6 +31,4 @@ def get_best_creation_time(video_path):
     stat = os.stat(video_path)
     return datetime.fromtimestamp(stat.st_ctime)
 
-# Usage:
-t = get_best_creation_time("myvideo.mp4")
-print("Best available creation time:", t)
+
