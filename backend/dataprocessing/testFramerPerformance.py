@@ -9,6 +9,8 @@ from framer2 import framer
 class TestFramerPerformance(unittest.TestCase):
     """
     Unit test for measuring peak RAM usage and runtime of framer() on a given video.
+    Author: Alex Foster
+    Date: 2023-10-01
     """
 
     def test_ram_and_time(self):

@@ -4,6 +4,19 @@ from datetime import datetime
 import os
 
 def get_video_creation_time(video_path):
+    """
+    Extracts the creation time of a video file using ffprobe or falls back to filesystem creation.
+    Args:
+        video_path (str): Path to the video file.
+    Returns:
+        datetime: Creation time of the video.
+    Raises:
+        Exception: If neither ffprobe nor filesystem creation time can be determined.
+    Author: Alex Foster
+    Date: 2023-10-01
+    """
+
+
     # First try ffprobe
     try:
         result = subprocess.run(
