@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 import os
 
-def get_best_creation_time(video_path):
+def get_video_creation_time(video_path):
     # First try ffprobe
     try:
         result = subprocess.run(
