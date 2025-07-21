@@ -35,8 +35,12 @@ def test_single_frame_embedding():
     
     with torch.no_grad():
         features = model.encode_image(img)
+        print(f"Raw features shape: {features.shape}")
+        print(f"Raw features norm: {features.norm(dim=-1).item():.3f}")
+        
         # Normalize the features for proper cosine similarity
         features = features / features.norm(dim=-1, keepdim=True)
+        print(f"Normalized features norm: {features.norm(dim=-1).item():.3f}")
     
     embedding = features.squeeze().cpu().numpy()
     
@@ -55,13 +59,13 @@ def test_single_frame_embedding():
     print("\nTesting ChromaDB storage...")
     chroma_client = chromadb.PersistentClient(path="video_db")
     
-    # Delete and recreate collection to start fresh
+    # Delete and recreate collection to start fresh - using the CORRECT collection name
     try:
-        chroma_client.delete_collection(name="test_collection")
+        chroma_client.delete_collection(name="video_frames")
     except:
         pass
     
-    collection = chroma_client.create_collection(name="test_collection")
+    collection = chroma_client.create_collection(name="video_frames")
     
     # Add the embedding
     frame_id = "frame_0001"
@@ -73,6 +77,10 @@ def test_single_frame_embedding():
     
     print("Successfully added to ChromaDB")
     
+    # Verify it was actually added
+    all_items = collection.get()
+    print(f"Items in collection after adding: {len(all_items['ids'])}")
+    
     # Test querying back
     print("\nTesting query...")
     
@@ -82,13 +90,17 @@ def test_single_frame_embedding():
     
     with torch.no_grad():
         text_embedding = model.encode_text(text_tokens)
+        print(f"Raw text embedding norm: {text_embedding.norm(dim=-1).item():.3f}")
+        
         # Normalize the text embedding too
         text_embedding = text_embedding / text_embedding.norm(dim=-1, keepdim=True)
+        print(f"Normalized text embedding norm: {text_embedding.norm(dim=-1).item():.3f}")
     
     query_embedding = text_embedding.squeeze().cpu().numpy()
     
     print(f"Query embedding shape: {query_embedding.shape}")
     print(f"Query embedding range: [{query_embedding.min():.3f}, {query_embedding.max():.3f}]")
+    print(f"Query embedding final norm: {np.linalg.norm(query_embedding):.3f}")
     
     # Search
     results = collection.query(
@@ -99,10 +111,17 @@ def test_single_frame_embedding():
     if results['ids'] and len(results['ids'][0]) > 0:
         distance = results['distances'][0][0]
         similarity = 1 - distance
-        print(f"Distance: {distance:.3f}")
-        print(f"Similarity: {similarity:.3f}")
+        print(f"ChromaDB Distance: {distance:.3f}")
+        print(f"ChromaDB Similarity: {similarity:.3f}")
         print(f"Found frame: {results['ids'][0][0]}")
         print(f"Metadata: {results['metadatas'][0][0]}")
+        
+        # Manual cosine similarity calculation for verification
+        manual_cosine = np.dot(embedding, query_embedding)
+        manual_distance = 1 - manual_cosine
+        print(f"Manual cosine similarity: {manual_cosine:.3f}")
+        print(f"Manual distance: {manual_distance:.3f}")
+        
     else:
         print("No results found")
 
