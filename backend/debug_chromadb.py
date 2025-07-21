@@ -7,7 +7,10 @@ def inspect_chromadb():
     try:
         # Connect to ChromaDB
         chroma_client = chromadb.PersistentClient(path="video_db")
-        collection = chroma_client.get_or_create_collection(name="video_frames")
+        collection = chroma_client.get_or_create_collection(
+            name="video_frames",
+            metadata={"hnsw:space": "cosine"}  # Use cosine distance
+        )
         
         # Get all items in the collection
         results = collection.get()

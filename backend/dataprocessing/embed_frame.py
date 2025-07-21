@@ -45,7 +45,10 @@ def process_frames_in_folder(folder_path, model, preprocess, device, collection_
 
     # Setup ChromaDB
     chroma_client = chromadb.PersistentClient(path="video_db")
-    collection = chroma_client.get_or_create_collection(name=collection_name)
+    collection = chroma_client.get_or_create_collection(
+        name=collection_name,
+        metadata={"hnsw:space": "cosine"}  # Use cosine distance for proper similarity
+    )
 
     # Only look for .jpg files
     image_extensions = {".jpg"}

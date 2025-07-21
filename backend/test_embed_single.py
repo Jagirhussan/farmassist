@@ -65,7 +65,10 @@ def test_single_frame_embedding():
     except:
         pass
     
-    collection = chroma_client.create_collection(name="video_frames")
+    collection = chroma_client.create_collection(
+        name="video_frames",
+        metadata={"hnsw:space": "cosine"}  # Use cosine distance!
+    )
     
     # Add the embedding
     frame_id = "frame_0001"

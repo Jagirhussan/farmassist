@@ -11,7 +11,10 @@ class VideoFrameRetriever:
         """Initialize the video frame retriever with ChromaDB and OpenCLIP model"""
         # Setup ChromaDB client
         self.chroma_client = chromadb.PersistentClient(path=db_path)
-        self.collection = self.chroma_client.get_or_create_collection(name=collection_name)
+        self.collection = self.chroma_client.get_or_create_collection(
+            name=collection_name,
+            metadata={"hnsw:space": "cosine"}  # Use cosine distance for proper similarity
+        )
         
         # Load the same OpenCLIP model used for embedding
         self.model, _, self.preprocess = open_clip.create_model_and_transforms(
