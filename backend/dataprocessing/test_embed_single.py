@@ -18,8 +18,8 @@ def test_single_frame_embedding():
     print(f"Model loaded on device: {device}")
     
     # Test frame path
-    frame_path = "dataprocessing/frames/frame_0001.jpg"
-    json_path = "dataprocessing/frames/frame_0001.json"
+    frame_path = "frames/frame_0001.jpg"
+    json_path = "frames/frame_0001.json"
     
     if not os.path.exists(frame_path):
         print(f"Frame not found: {frame_path}")
@@ -57,7 +57,7 @@ def test_single_frame_embedding():
     
     # Test ChromaDB storage
     print("\nTesting ChromaDB storage...")
-    chroma_client = chromadb.PersistentClient(path="dataprocessing/video_db")
+    chroma_client = chromadb.PersistentClient(path="video_db")
     
     # Delete and recreate collection to start fresh - using the CORRECT collection name
     try:

@@ -1,7 +1,7 @@
 # backend/llm_utils.py
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
-from video_query import get_video_context
+from dataprocessing.video_query import get_video_context
 
 # Global variables to store the model (loaded once)
 tokenizer = None

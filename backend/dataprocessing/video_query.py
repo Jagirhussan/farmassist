@@ -7,7 +7,7 @@ from typing import List, Dict, Any
 import json
 
 class VideoFrameRetriever:
-    def __init__(self, db_path="dataprocessing/video_db", collection_name="video_frames"):
+    def __init__(self, db_path="video_db", collection_name="video_frames"):
         """Initialize the video frame retriever with ChromaDB and OpenCLIP model"""
         # Setup ChromaDB client
         self.chroma_client = chromadb.PersistentClient(path=db_path)
