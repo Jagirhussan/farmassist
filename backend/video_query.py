@@ -32,13 +32,14 @@ class VideoFrameRetriever:
         
         return text_embedding.squeeze().cpu().numpy()
     
-    def search_similar_frames(self, query: str, n_results: int = 5) -> List[Dict[str, Any]]:
+    def search_similar_frames(self, query: str, n_results: int = 5, filter_video: str = None) -> List[Dict[str, Any]]:
         """
         Search for frames similar to the text query
         
         Args:
             query (str): Text description to search for
             n_results (int): Number of similar frames to return
+            filter_video (str): Optional - only search frames from this specific video
             
         Returns:
             List of dictionaries containing frame metadata and similarity scores
@@ -46,10 +47,16 @@ class VideoFrameRetriever:
         # Embed the query
         query_embedding = self.embed_text_query(query)
         
+        # Prepare where clause if filtering by video
+        where_clause = None
+        if filter_video:
+            where_clause = {"source_video": filter_video}
+        
         # Search ChromaDB for similar frames
         results = self.collection.query(
             query_embeddings=[query_embedding.tolist()],
-            n_results=n_results
+            n_results=n_results,
+            where=where_clause
         )
         
         # Format results
@@ -65,21 +72,23 @@ class VideoFrameRetriever:
         
         return similar_frames
     
-    def get_contextual_info(self, query: str, n_results: int = 3) -> str:
+    def get_contextual_info(self, query: str, n_results: int = 3, filter_video: str = None) -> str:
         """
         Get contextual information from video frames for LLM prompting
         
         Args:
             query (str): User's query
             n_results (int): Number of frames to retrieve
+            filter_video (str): Optional - only search frames from this specific video
             
         Returns:
             Formatted string with contextual information
         """
-        similar_frames = self.search_similar_frames(query, n_results)
+        similar_frames = self.search_similar_frames(query, n_results, filter_video)
         
         if not similar_frames:
-            return "No relevant video context found."
+            video_msg = f" from video '{filter_video}'" if filter_video else ""
+            return f"No relevant video context found{video_msg}."
         
         context_parts = ["RELEVANT VIDEO CONTEXT:"]
         
@@ -100,13 +109,14 @@ class VideoFrameRetriever:
 # Global retriever instance
 video_retriever = None
 
-def get_video_context(query: str, n_results: int = 3) -> str:
+def get_video_context(query: str, n_results: int = 3, filter_video: str = "alex1min.mp4") -> str:
     """
     Get video context for a query - used by LLM
     
     Args:
         query (str): User's query
         n_results (int): Number of similar frames to retrieve
+        filter_video (str): Only search frames from this specific video (default: alex1min.mp4)
         
     Returns:
         Contextual information string
@@ -118,7 +128,7 @@ def get_video_context(query: str, n_results: int = 3) -> str:
             print("[VideoQuery] Initializing video retriever...")
             video_retriever = VideoFrameRetriever()
         
-        return video_retriever.get_contextual_info(query, n_results)
+        return video_retriever.get_contextual_info(query, n_results, filter_video)
     
     except Exception as e:
         print(f"[VideoQuery] Error retrieving context: {e}")
@@ -130,5 +140,13 @@ if __name__ == "__main__":
     test_query = "person typing"
     
     print(f"Testing query: '{test_query}'")
-    context = retriever.get_contextual_info(test_query)
-    print(f"Context:\n{context}")
+    
+    # Test without filter
+    print("\n1. WITHOUT FILTER (all videos):")
+    context_all = retriever.get_contextual_info(test_query, n_results=5)
+    print(f"Context:\n{context_all}")
+    
+    # Test with filter
+    print(f"\n2. WITH FILTER (alex1min.mp4 only):")
+    context_filtered = retriever.get_contextual_info(test_query, n_results=5, filter_video="alex1min.mp4")
+    print(f"Context:\n{context_filtered}")
