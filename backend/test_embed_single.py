@@ -35,6 +35,8 @@ def test_single_frame_embedding():
     
     with torch.no_grad():
         features = model.encode_image(img)
+        # Normalize the features for proper cosine similarity
+        features = features / features.norm(dim=-1, keepdim=True)
     
     embedding = features.squeeze().cpu().numpy()
     
@@ -80,6 +82,8 @@ def test_single_frame_embedding():
     
     with torch.no_grad():
         text_embedding = model.encode_text(text_tokens)
+        # Normalize the text embedding too
+        text_embedding = text_embedding / text_embedding.norm(dim=-1, keepdim=True)
     
     query_embedding = text_embedding.squeeze().cpu().numpy()
     

@@ -5,6 +5,7 @@ import json
 from PIL import Image
 import chromadb
 import time
+import numpy as np
 from memory_profiler import profile
 
 def embed_frame(frame_path, model, preprocess, device):
@@ -18,11 +19,13 @@ def embed_frame(frame_path, model, preprocess, device):
         device: Torch device.
 
     Returns:
-        np.ndarray: The embedding of the image.
+        np.ndarray: The embedding of the image (normalized).
     """
     img = preprocess(Image.open(frame_path)).unsqueeze(0).to(device)
     with torch.no_grad():
         features = model.encode_image(img)
+        # Normalize the features for proper cosine similarity
+        features = features / features.norm(dim=-1, keepdim=True)
     return features.squeeze().cpu().numpy()
 
 @profile
@@ -58,13 +61,26 @@ def process_frames_in_folder(folder_path, model, preprocess, device, collection_
             continue
 
         # Embed image
-        embedding = embed_frame(image_path, model, preprocess, device)
+        try:
+            embedding = embed_frame(image_path, model, preprocess, device)
+            print(f"Embedding shape: {embedding.shape}, norm: {np.linalg.norm(embedding):.3f}")
+        except Exception as e:
+            print(f"Error embedding {image_file}: {e}")
+            continue
 
-        with open(json_path, "r") as f:
-            metadata = json.load(f)
+        try:
+            with open(json_path, "r") as f:
+                metadata = json.load(f)
+        except Exception as e:
+            print(f"Error reading metadata for {image_file}: {e}")
+            continue
 
-        collection.add(ids=[frame_id], embeddings=[embedding], metadatas=[metadata])
-        print(f"Embedded and stored: {image_file}")
+        try:
+            collection.add(ids=[frame_id], embeddings=[embedding.tolist()], metadatas=[metadata])
+            print(f"Embedded and stored: {image_file}")
+        except Exception as e:
+            print(f"Error storing {image_file} to ChromaDB: {e}")
+            continue
 
 
 

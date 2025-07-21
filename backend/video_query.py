@@ -29,6 +29,8 @@ class VideoFrameRetriever:
         
         with torch.no_grad():
             text_embedding = self.model.encode_text(text_tokens)
+            # Normalize the embedding for proper cosine similarity
+            text_embedding = text_embedding / text_embedding.norm(dim=-1, keepdim=True)
         
         return text_embedding.squeeze().cpu().numpy()
     
