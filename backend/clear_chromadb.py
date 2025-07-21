@@ -4,7 +4,7 @@ import chromadb
 def clear_chromadb():
     """Clear all data from ChromaDB collection"""
     try:
-        chroma_client = chromadb.PersistentClient(path="video_db")
+        chroma_client = chromadb.PersistentClient(path="dataprocessing/video_db")
         
         # Delete the collection entirely
         try:

@@ -7,7 +7,7 @@ from typing import List, Dict, Any
 import json
 
 class VideoFrameRetriever:
-    def __init__(self, db_path="video_db", collection_name="video_frames"):
+    def __init__(self, db_path="dataprocessing/video_db", collection_name="video_frames"):
         """Initialize the video frame retriever with ChromaDB and OpenCLIP model"""
         # Setup ChromaDB client
         self.chroma_client = chromadb.PersistentClient(path=db_path)
@@ -146,12 +146,32 @@ if __name__ == "__main__":
     
     print(f"Testing query: '{test_query}'")
     
-    # Test without filter
-    print("\n1. WITHOUT FILTER (all videos):")
-    context_all = retriever.get_contextual_info(test_query, n_results=5)
-    print(f"Context:\n{context_all}")
+    # First, check what's actually in the database
+    print("\n=== DATABASE CONTENTS ===")
+    all_items = retriever.collection.get()
+    print(f"Total items in database: {len(all_items['ids'])}")
     
-    # Test with filter
-    print(f"\n2. WITH FILTER (alex1min.mp4 only):")
-    context_filtered = retriever.get_contextual_info(test_query, n_results=5, filter_video="alex1min.mp4")
-    print(f"Context:\n{context_filtered}")
+    if len(all_items['ids']) > 0:
+        # Show unique source videos
+        source_videos = {}
+        for metadata in all_items['metadatas']:
+            video = metadata.get('source_video', 'unknown')
+            source_videos[video] = source_videos.get(video, 0) + 1
+        
+        print("Videos found:")
+        for video, count in source_videos.items():
+            print(f"  - '{video}': {count} frames")
+    else:
+        print("Database is empty!")
+        exit()
+    
+    # Test without filter
+    print(f"\n=== TEST 1: WITHOUT FILTER (all videos) ===")
+    context_all = retriever.get_contextual_info(test_query, n_results=3)
+    print(f"Result:\n{context_all}")
+    
+    # Test with filter for each video found
+    for video_name in source_videos.keys():
+        print(f"\n=== TEST 2: WITH FILTER ('{video_name}' only) ===")
+        context_filtered = retriever.get_contextual_info(test_query, n_results=3, filter_video=video_name)
+        print(f"Result:\n{context_filtered}")

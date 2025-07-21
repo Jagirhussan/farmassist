@@ -57,7 +57,7 @@ def test_single_frame_embedding():
     
     # Test ChromaDB storage
     print("\nTesting ChromaDB storage...")
-    chroma_client = chromadb.PersistentClient(path="video_db")
+    chroma_client = chromadb.PersistentClient(path="dataprocessing/video_db")
     
     # Delete and recreate collection to start fresh - using the CORRECT collection name
     try:
