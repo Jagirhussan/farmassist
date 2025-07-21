@@ -4,8 +4,8 @@ import os
 import open_clip
 import torch
 
-# Load the OpenCLIP model and tokenizer
-model, _, preprocess = open_clip.create_model_and_transforms('ViT-B-32', pretrained='openai')    
+# Load the OpenCLIP model and tokenizer - MUST match embed_frame.py
+model, _, preprocess = open_clip.create_model_and_transforms('ViT-B-32', pretrained='laion2b_s34b_b79k')    
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model.to(device)
 
