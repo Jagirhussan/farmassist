@@ -127,7 +127,7 @@ def get_video_context(query: str, n_results: int = 3) -> str:
 if __name__ == "__main__":
     # Test the retriever
     retriever = VideoFrameRetriever()
-    test_query = "person walking"
+    test_query = "person typing"
     
     print(f"Testing query: '{test_query}'")
     context = retriever.get_contextual_info(test_query)
