@@ -1,6 +1,6 @@
 import requests
 
-JETSON_IP = "172.17.0.1"
+JETSON_IP = "172.23.185.222"
 
 def call_llm(prompt):
 	print("Opened call_llm")
