@@ -13,8 +13,8 @@ def load_model():
     
     if tokenizer is None or model is None:
         print("[LLM] Loading model...")
-        tokenizer = AutoTokenizer.from_pretrained("stabilityai/stablelm-zephyr-3b")
-        model = AutoModelForCausalLM.from_pretrained("stabilityai/stablelm-zephyr-3b")
+        tokenizer = AutoTokenizer.from_pretrained("stabilityai/stablelm-2-zephyr-1_6b")
+        model = AutoModelForCausalLM.from_pretrained("stabilityai/stablelm-2-zephyr-1_6b")
         print("[LLM] Model loaded successfully!")
 
 def run_llm(prompt: str, use_video_context: bool = True) -> str:
