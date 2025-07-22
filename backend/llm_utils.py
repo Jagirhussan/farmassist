@@ -15,6 +15,11 @@ def load_model():
         print("[LLM] Loading model...")
         tokenizer = AutoTokenizer.from_pretrained("TinyLlama/TinyLlama-1.1B-Chat-v1.0")
         model = AutoModelForCausalLM.from_pretrained("TinyLlama/TinyLlama-1.1B-Chat-v1.0")
+        
+        # Set up pad token if it doesn't exist
+        if tokenizer.pad_token is None:
+            tokenizer.pad_token = tokenizer.eos_token
+            
         print("[LLM] Model loaded successfully!")
 
 def run_llm(prompt: str, use_video_context: bool = True) -> str:
@@ -33,8 +38,9 @@ def run_llm(prompt: str, use_video_context: bool = True) -> str:
                 user_message = f"{video_context}\n\nUser Question: {prompt}"
                 print(f"[LLM] Added video context to prompt")
         
-        # Format as chat messages for TinyLlama
+        # Format as chat messages for TinyLlama with system message
         messages = [
+            {"role": "system", "content": "You are a helpful assistant that answers questions based on video content and general knowledge. Provide clear, concise, and helpful responses."},
             {"role": "user", "content": user_message}
         ]
         
