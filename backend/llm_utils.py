@@ -40,7 +40,7 @@ def run_llm(prompt: str, use_video_context: bool = True) -> str:
         
         # Format as chat messages for TinyLlama with system message
         messages = [
-            {"role": "system", "content": "You are a helpful assistant that answers questions based on video content and general knowledge. Provide clear, concise, and helpful responses."},
+            {"role": "system", "content": "You are a helpful assistant that answers questions based on video content, specifically focused on animal welfare and health insights on a farm in New Zealand. Provide clear, concise, and helpful responses and don't provide any irrelevant information."},
             {"role": "user", "content": user_message}
         ]
         
