@@ -11,6 +11,9 @@ import torch
 import shutil
 import sys
 
+# Global variables to store the model (loaded once)
+tokenizer = None
+model = None
 
 def load_model(model_name: str = "princeton-nlp/Sheared-LLaMA-2.7B"):
     """Load the LLM model once when the server starts"""
