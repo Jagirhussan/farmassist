@@ -15,7 +15,7 @@ import sys
 processor = None
 model = None
 
-def load_model(model_name: str = "princeton-nlp/Sheared-LLaMA-2.7B"):
+def load_model():
     """Load the LLM model once when the server starts"""
     global processor, model
     
@@ -23,9 +23,6 @@ def load_model(model_name: str = "princeton-nlp/Sheared-LLaMA-2.7B"):
         processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
         model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base").to("cuda" if torch.cuda.is_available() else "cpu")
         
-        # Set up pad token if it doesn't exist
-        if processor.pad_token is None:
-            processor.pad_token = processor.eos_token
 
 def framer(video_path):
 
@@ -34,9 +31,6 @@ def framer(video_path):
         shutil.rmtree("frames")
     os.makedirs("frames", exist_ok=True)
 
-    # input model name
-    model_name = "princeton-nlp/Sheared-LLaMA-2.7B"
-
     # load the video from the path and initialize the video capture
     video = cv2.VideoCapture(video_path)
     fps = video.get(cv2.CAP_PROP_FPS)
@@ -44,16 +38,7 @@ def framer(video_path):
     saved_frame_index = 0
 
     # initialise the model
-    load_model(model_name)
-
-    messages = [
-        {"role": "system", "content": "You are a helpful AI assistant."
-        "Provide one answer ONLY the following query based on the context provided below. "
-        "Do not generate or answer any other questions. "
-        "Do not make up or infer any information that is not directly stated in the context. "
-        "Provide a concise answer."},
-        {"role": "user", "content": "Explain what is happening in the image."}
-    ]
+    load_model()
 
     # initialise the time
     start_time = get_video_creation_time(video_path)
