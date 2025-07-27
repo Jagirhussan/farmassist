@@ -1,6 +1,6 @@
 # framer3.py
 
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import BlipProcessor, BlipForConditionalGeneration
 from extract_time import get_video_creation_time
 import cv2
 from datetime import datetime, timedelta
@@ -12,21 +12,21 @@ import shutil
 import sys
 
 # Global variables to store the model (loaded once)
-tokenizer = None
+processor = None
 model = None
 
 def load_model(model_name: str = "princeton-nlp/Sheared-LLaMA-2.7B"):
     """Load the LLM model once when the server starts"""
-    global tokenizer, model
+    global processor, model
     
-    if tokenizer is None or model is None:
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
-        model = AutoModelForCausalLM.from_pretrained(model_name)
+    if processor is None or model is None:
+        processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
+        model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base").to("cuda" if torch.cuda.is_available() else "cpu")
         
         # Set up pad token if it doesn't exist
-        if tokenizer.pad_token is None:
-            tokenizer.pad_token = tokenizer.eos_token
-            
+        if processor.pad_token is None:
+            processor.pad_token = processor.eos_token
+
 def framer(video_path):
 
     if os.path.exists("frames"):
@@ -71,24 +71,11 @@ def framer(video_path):
             rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             image = Image.fromarray(rgb_frame)
 
-            inputs = tokenizer(
-                messages,
-                image=image,
-                add_generation_prompt=True,
-                tokenize=True,
-                return_dict=True,
-                return_tensors="pt"
-            )
+            inputs = processor(images=image, return_tensors="pt").to(model.device)
 
             with torch.no_grad():
-                outputs = model.generate(
-                    **inputs,
-                    max_new_tokens=100,
-                    do_sample=True,
-                    temperature=0.7,
-                    top_p=0.9
-                )
-                response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+                output = model.generate(**inputs)
+                response = processor.decode(output[0], skip_special_tokens=True)    
 
             # save the .json metadata of the frame with the response
             metadata = {
