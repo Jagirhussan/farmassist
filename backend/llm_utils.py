@@ -42,6 +42,7 @@ def run_llm(prompt: str, use_video_context: bool = True) -> str:
         messages = [
             {"role": "system", "content": "You are a helpful assistant that answers questions based on video content, specifically focused on animal welfare and health insights on a farm in New Zealand. Provide clear, concise, and helpful responses and don't provide any irrelevant information. If no information can be found please state this and don't make up any information. If you are unsure about the answer, please say so. "},
             {"role": "user", "content": user_message}
+            # add the context to the user message
         ]
         
         # Apply chat template
