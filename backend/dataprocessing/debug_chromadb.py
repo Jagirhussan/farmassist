@@ -11,17 +11,17 @@ def inspect_chromadb():
             name="video_frames"
         )
         
-        # Get all items in the collection
-        results = collection.get()
-        
+        results = collection.get(include=['documents', 'embeddings', 'metadatas'])
+
         print(f"Total items in collection: {len(results['ids'])}")
-        
-        # print the documents, embeddings, and metadata
-        for i in range(min(5, len(results['ids']))):  # Print first 5 items
+
+        for i in range(min(5, len(results['ids']))):
             print(f"Item {i+1}:")
             print(f"  ID: {results['ids'][i]}")
-            print(f"  Embedding: {results['embeddings'][i]}...")
-            print(f"  Documents: {results['documents'][i]}...")
+            print(f"  Embedding: {results['embeddings'][i][:5]}...")
+            print(f"  Document: {results['documents'][i][:50]}...")
+            print(f"  Metadata: {json.dumps(results['metadatas'][i], indent=2)}")
+
 
         
     except Exception as e:
