@@ -18,7 +18,7 @@ model_encoder = None
 
 def load_models():
     """Load the LLM, database, and caption encoding models once when the server starts"""
-    global processor, model, db
+    global processor, model, db, model_encoder
 
     if processor is None or model is None or db is None or model_encoder is None:
         processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base", use_fast=True)
