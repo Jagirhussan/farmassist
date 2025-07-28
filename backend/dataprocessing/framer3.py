@@ -56,7 +56,7 @@ def framer(video_path):
             rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             image = Image.fromarray(rgb_frame)
 
-            inputs = processor(images=image, return_tensors="pt").to(model.device)
+            inputs = processor(images=image, return_tensors="pt", use_fast=True).to(model.device)
 
             with torch.no_grad():
                 output = model.generate(**inputs)
