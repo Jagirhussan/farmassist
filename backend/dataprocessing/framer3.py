@@ -3,15 +3,12 @@
 from transformers import BlipProcessor, BlipForConditionalGeneration
 from extract_time import get_video_creation_time
 import cv2
-from datetime import datetime, timedelta
-import os
-import json
+from datetime import timedelta
 from PIL import Image
 import torch
 import sys
 import chromadb
 from sentence_transformers import SentenceTransformer 
-import numpy as np
 
 # Global variables to store the model (loaded once)
 processor = None
