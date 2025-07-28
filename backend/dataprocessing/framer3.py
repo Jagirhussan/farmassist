@@ -68,7 +68,7 @@ def framer(video_path):
 
             collection.add(
                 documents=[response],
-                embeddings=[embedded_response],
+                embeddings=embedded_response,
                 ids=[f"{start_time + timedelta(seconds=saved_frame_index)}"]
                 )
 
