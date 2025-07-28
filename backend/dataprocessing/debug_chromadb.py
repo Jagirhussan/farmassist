@@ -8,8 +8,7 @@ def inspect_chromadb():
         # Connect to ChromaDB
         chroma_client = chromadb.PersistentClient(path="video_db")
         collection = chroma_client.get_or_create_collection(
-            name="video_frames",
-            metadata={"hnsw:space": "cosine"}  # Use cosine distance
+            name="video_frames"
         )
         
         # Get all items in the collection
