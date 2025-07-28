@@ -70,7 +70,7 @@ def framer(video_path):
             }
 
             # save the metadata as a .json file
-            with open(f"frame_{saved_frame_index}.json", "w") as f:
+            with open(f"frames/frame_{saved_frame_index}.json", "w") as f:
                 json.dump(metadata, f)
         
         saved_frame_index += 1
