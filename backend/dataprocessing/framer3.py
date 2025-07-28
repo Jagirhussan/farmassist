@@ -20,7 +20,7 @@ def load_model():
     global processor, model
     
     if processor is None or model is None:
-        processor = BlipProcessor.from_pretrained(model_id="Salesforce/blip-image-captioning-base", use_fast=True)
+        processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base", use_fast=True)
         model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base").to("cuda" if torch.cuda.is_available() else "cpu")
         
 
