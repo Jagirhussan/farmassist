@@ -8,28 +8,28 @@ import os
 import json
 from PIL import Image
 import torch
-import shutil
 import sys
+import chromadb
+from sentence_transformers import SentenceTransformer 
+import numpy as np
 
 # Global variables to store the model (loaded once)
 processor = None
 model = None
+db = None
+model_encoder = None
 
-def load_model():
-    """Load the LLM model once when the server starts"""
-    global processor, model
-    
-    if processor is None or model is None:
+def load_models():
+    """Load the LLM, database, and caption encoding models once when the server starts"""
+    global processor, model, db
+
+    if processor is None or model is None or db is None or model_encoder is None:
         processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base", use_fast=True)
         model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base").to("cuda" if torch.cuda.is_available() else "cpu")
-        
+        db = chromadb.PersistentClient(path="video_db")
+        model_encoder = SentenceTransformer('all-MiniLM-L6-v2')
 
 def framer(video_path):
-
-    if os.path.exists("frames"):
-        # clear the directory if it exists
-        shutil.rmtree("frames")
-    os.makedirs("frames", exist_ok=True)
 
     # load the video from the path and initialize the video capture
     video = cv2.VideoCapture(video_path)
@@ -38,7 +38,7 @@ def framer(video_path):
     saved_frame_index = 0
 
     # initialise the model
-    load_model()
+    load_models()
 
     # initialise the time
     start_time = get_video_creation_time(video_path)
@@ -60,18 +60,17 @@ def framer(video_path):
 
             with torch.no_grad():
                 output = model.generate(**inputs)
-                response = processor.decode(output[0], skip_special_tokens=True)    
+                response = processor.decode(output[0], skip_special_tokens=True).tolist()    
+        
+            # embed the response and save it to a database.
+            embedded_response = model_encoder.encode(response).tolist()
 
-            # save the .json metadata of the frame with the response
-            metadata = {
-                "frame_index": saved_frame_index,
-                "timestamp": (start_time + timedelta(seconds=saved_frame_index+30)).isoformat(),
-                "response": response
-            }
+            collection = db.get_or_create_collection(name="video_frames")
 
-            # save the metadata as a .json file
-            with open(f"frames/frame_{saved_frame_index}.json", "w") as f:
-                json.dump(metadata, f)
+            collection.add(documents=response,
+                   embeddings=embedded_response,
+                   ids=[f"{start_time + timedelta(seconds=saved_frame_index)}"])
+
         
         saved_frame_index += 1
         frame_count += 1
