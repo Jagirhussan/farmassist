@@ -58,9 +58,11 @@ def framer(video_path):
             with torch.no_grad():
                 output = model.generate(**inputs)
                 response = processor.decode(output[0], skip_special_tokens=True)   
+                print(response)
         
             # embed the response and save it to a database.
             embedded_response = model_encoder.encode(response)
+            print(embedded_response)
 
             collection = db.get_or_create_collection(name="video_frames", metadata={'reset': True})
 

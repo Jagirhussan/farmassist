@@ -20,7 +20,7 @@ def inspect_chromadb():
         for i in range(min(5, len(results['ids']))):  # Print first 5 items
             print(f"Item {i+1}:")
             print(f"  ID: {results['ids'][i]}")
-            print(f"  Embedding: {results['embeddings'][i]}...")  # Print first 5 values of embedding
+            print(f"  Embedding: {results['embeddings'][i]}...")
             print(f"  Documents: {results['documents'][i]}...")
 
         
