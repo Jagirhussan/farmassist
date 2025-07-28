@@ -60,12 +60,12 @@ def framer(video_path):
                 response = processor.decode(output[0], skip_special_tokens=True)   
         
             # embed the response and save it to a database.
-            embedded_response = model_encoder.encode(response).tolist()
-
+            embedded_response = model_encoder.encode(response)
+            
             collection = db.get_or_create_collection(name="video_frames")
 
-            collection.add(documents=response,
-                   embeddings=embedded_response,
+            collection.add(documents=[response],
+                   embeddings=[embedded_response],
                    ids=[f"{start_time + timedelta(seconds=saved_frame_index)}"])
 
         
