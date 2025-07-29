@@ -28,15 +28,18 @@ def load_models():
 
 def retrieve_data():
     """Retrieve all data from ChromaDB collection."""
+    print("[LLM] Retrieving data from ChromaDB...")
     # connect to the client
     client = chromadb.PersistentClient(path="video_db")
     # get or create the collection
     collection = client.get_or_create_collection(name="video_frames")    
     # return the data including documents and embeddings
+    print(f"[LLM] Retrieved {len(collection.get()['ids'])} items from ChromaDB.")
     return collection.get(include=['documents', 'embeddings'])
 
 def retrieve_context(query):
     """Retrieve relevant context from ChromaDB based on the query."""
+    print(f"[LLM] Retrieving context for query: {query}")
     # embed the query to the same format as the stored embeddings
     query_embedded = model_encoder.encode(query, convert_to_tensor=True)
     # retrieve the video frame data
@@ -45,9 +48,10 @@ def retrieve_context(query):
     similarities = model_encoder.similarity(data['embeddings'], query_embedded)
     # retrieve the most similar document for reference
     retrieved, timestamp = data['documents'][similarities.argmax().item()], data['ids'][similarities.argmax().item()]
+    print(f"[LLM] Successfully retrieved context: {retrieved}, timestamp: {timestamp}")
     return retrieved, timestamp
 
-def run_llm(prompt: str, use_video_context: bool = True) -> str:
+def run_llm(prompt):
     """Process a prompt with the loaded LLM model, optionally with video context"""
     load_models()  # Ensure model is loaded
     
