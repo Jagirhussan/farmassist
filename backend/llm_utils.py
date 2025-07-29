@@ -1,48 +1,72 @@
 # backend/llm_utils.py
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
-from dataprocessing.video_query import get_video_context
+from sentence_transformers import SentenceTransformer
+import chromadb
+
 
 # Global variables to store the model (loaded once)
 tokenizer = None
 model = None
+model_encoder = None
 
-def load_model():
+def load_models():
     """Load the LLM model once when the server starts"""
-    global tokenizer, model
-    
-    if tokenizer is None or model is None:
-        print("[LLM] Loading model...")
+    global tokenizer, model, model_encoder
+
+    if tokenizer is None or model is None or model_encoder is None:
+        print("[LLM] Loading models...")
         tokenizer = AutoTokenizer.from_pretrained("TinyLlama/TinyLlama-1.1B-Chat-v1.0")
         model = AutoModelForCausalLM.from_pretrained("TinyLlama/TinyLlama-1.1B-Chat-v1.0")
-        
+        model_encoder = SentenceTransformer("all-MiniLM-L6-v2")
+
         # Set up pad token if it doesn't exist
         if tokenizer.pad_token is None:
             tokenizer.pad_token = tokenizer.eos_token
             
-        print("[LLM] Model loaded successfully!")
+        print("[LLM] Models loaded successfully!")
+
+def retrieve_data():
+    """Retrieve all data from ChromaDB collection."""
+    # connect to the client
+    client = chromadb.PersistentClient(path="video_db")
+    # get or create the collection
+    collection = client.get_or_create_collection(name="video_frames")    
+    # return the data including documents and embeddings
+    return collection.get(include=['documents', 'embeddings'])
+
+def retrieve_context(query):
+    """Retrieve relevant context from ChromaDB based on the query."""
+    # embed the query to the same format as the stored embeddings
+    query_embedded = model_encoder.encode(query, convert_to_tensor=True)
+    # retrieve the video frame data
+    data = retrieve_data()
+    # calculate the similarities with the cosine similarity
+    similarities = model_encoder.similarity(query_embedded, data['embeddings'])
+    # retrieve the most similar document for reference
+    retrieved, timestamp = data['documents'][similarities.argmax().item()], data['ids'][similarities.argmax().item()]
+    return retrieved, timestamp
 
 def run_llm(prompt: str, use_video_context: bool = True) -> str:
     """Process a prompt with the loaded LLM model, optionally with video context"""
-    load_model()  # Ensure model is loaded
+    load_models()  # Ensure model is loaded
     
     print(f"[LLM] Processing prompt: {prompt}")
     
     try:
-        # Get video context if requested
-        user_message = prompt
-        if use_video_context:
-            print("[LLM] Retrieving video context...")
-            video_context = get_video_context(prompt, n_results=3)
-            if "No relevant video context found" not in video_context:
-                user_message = f"{video_context}\n\nUser Question: {prompt}"
-                print(f"[LLM] Added video context to prompt")
-        
+        # get the most relevant observation from the data and it's timestamp.
+        retrieved_texts, timestamp = retrieve_context(prompt)
+
         # Format as chat messages for TinyLlama with system message
         messages = [
-            {"role": "system", "content": "You are a helpful assistant that answers questions based on video content, specifically focused on animal welfare and health insights on a farm in New Zealand. Provide clear, concise, and helpful responses and don't provide any irrelevant information. If no information can be found please state this and don't make up any information. If you are unsure about the answer, please say so. "},
-            {"role": "user", "content": user_message}
-            # add the context to the user message
+            {"role": "system", "content": "You are a helpful AI assistant."
+             "Provide one Answer ONLY the following query based on the context provided below. "
+             "Do not generate or answer any other questions. "
+             "Do not make up or infer any information that is not directly stated in the context. "
+             "Provide a concise answer."
+             f"{retrieved_texts}"
+             f"{timestamp}"},
+            {"role": "user", "content": prompt}
         ]
         
         # Apply chat template
