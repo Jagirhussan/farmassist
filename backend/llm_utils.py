@@ -45,8 +45,9 @@ def retrieve_context(query):
     # retrieve the video frame data
     data = retrieve_data()
 
-    print(f"data['embeddings'] dtype: {type(data['embeddings'][0])} | {np.array(data['embeddings']).dtype}")
-    print(f"query_embedded dtype: {type(query_embedded)} | {np.array(query_embedded).dtype}")
+    print(f"data['embeddings'] dtype: {type(data['embeddings'][0])}")
+    print(f"data dtype: {type(data)}")
+    print(f"query_embedded dtype: {type(query_embedded)}")
 
 
     # calculate the similarities with the cosine similarity
