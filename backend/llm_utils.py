@@ -42,7 +42,7 @@ def retrieve_context(query):
     # retrieve the video frame data
     data = retrieve_data()
     # calculate the similarities with the cosine similarity
-    similarities = model_encoder.similarity(query_embedded, data['embeddings'])
+    similarities = model_encoder.similarity(data['embeddings'], query_embedded)
     # retrieve the most similar document for reference
     retrieved, timestamp = data['documents'][similarities.argmax().item()], data['ids'][similarities.argmax().item()]
     return retrieved, timestamp
