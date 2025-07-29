@@ -44,6 +44,11 @@ def retrieve_context(query):
     query_embedded = model_encoder.encode(query)
     # retrieve the video frame data
     data = retrieve_data()
+
+    print(f"data['embeddings'] dtype: {type(data['embeddings'][0])} | {np.array(data['embeddings']).dtype}")
+    print(f"query_embedded dtype: {type(query_embedded)} | {np.array(query_embedded).dtype}")
+
+
     # calculate the similarities with the cosine similarity
     similarities = model_encoder.similarity(data['embeddings'], query_embedded)
     # retrieve the most similar document for reference
