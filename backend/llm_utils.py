@@ -3,6 +3,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 from sentence_transformers import SentenceTransformer
 import chromadb
+import numpy as np
 
 
 # Global variables to store the model (loaded once)
@@ -44,14 +45,8 @@ def retrieve_context(query):
     query_embedded = model_encoder.encode(query)
     # retrieve the video frame data
     data = retrieve_data()
-
-    print(f"data['embeddings'] dtype: {type(data['embeddings'][0])}")
-    print(f"data dtype: {type(data)}")
-    print(f"query_embedded dtype: {type(query_embedded)}")
-
-
     # calculate the similarities with the cosine similarity
-    similarities = model_encoder.similarity(data['embeddings'], query_embedded)
+    similarities = model_encoder.similarity(np.array(data['embeddings'], dtype=np.float32), np.array(query_embedded, dtype=np.float32))
     # retrieve the most similar document for reference
     retrieved, timestamp = data['documents'][similarities.argmax().item()], data['ids'][similarities.argmax().item()]
     print(f"[LLM] Successfully retrieved context: {retrieved}, timestamp: {timestamp}")
