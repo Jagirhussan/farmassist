@@ -30,7 +30,7 @@ def retrieve_data():
     """Retrieve all data from ChromaDB collection."""
     print("[LLM] Retrieving data from ChromaDB...")
     # connect to the client
-    client = chromadb.PersistentClient(path="video_db")
+    client = chromadb.PersistentClient(path="dataprocessing/video_db")
     # get or create the collection
     collection = client.get_or_create_collection(name="video_frames")    
     # return the data including documents and embeddings
