@@ -45,7 +45,7 @@ def home():
 
 # Run the Flask app if this script is executed directly
 if __name__ == '__main__':
-    print("[Frontend] Starting Flask app on http://localhost:3000 ...")
-    app.run(host='0.0.0.0', port=3000, debug=True)
+    print("[Frontend] Starting Flask app on http://localhost:3001 ...")
+    app.run(host='0.0.0.0', port=3001, debug=True)
 
 
