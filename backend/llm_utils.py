@@ -41,7 +41,7 @@ def retrieve_context(query):
     """Retrieve relevant context from ChromaDB based on the query."""
     print(f"[LLM] Retrieving context for query: {query}")
     # embed the query to the same format as the stored embeddings
-    query_embedded = model_encoder.encode(query, convert_to_tensor=True)
+    query_embedded = model_encoder.encode(query)
     # retrieve the video frame data
     data = retrieve_data()
     # calculate the similarities with the cosine similarity
