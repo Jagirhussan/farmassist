@@ -1,0 +1,30 @@
+.chat-input-container {
+  display: flex;
+  align-items: center;
+  padding: 15px; /* Increased padding to make the input section taller */
+  border-top: 1px solid #ccc;
+  background-color: #f9f9f9;
+}
+
+.chat-input-container input {
+  flex: 1;
+  padding: 12px; /* Slightly increased padding for a taller input field */
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.chat-input-container button {
+  background-color: #66ab94; /* Changed to match the header color */
+  color: white;
+  border: none;
+  padding: 13px 13px; /* Slightly increased padding for a taller button */
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.chat-input-container button img {
+  width: 20px;
+  height: 20px;
+}

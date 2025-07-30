@@ -1,0 +1,168 @@
+.sidebar {
+  width: 200px;
+  background-color: #b8d8cf; /* Updated sidebar color */
+  border-right: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  transition: width 0.3s ease;
+}
+
+.sidebar.closed {
+  width: 60px; /* Collapsed width */
+  padding: 10px;
+}
+
+.sidebar .toggle-sidebar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 20px;
+  margin-top: 7px;
+  display: flex;
+  justify-content: flex-start; /* Align to the left by default */
+  margin-left: -5px; /* Move the close icon 3px to the left when sidebar is open */
+}
+
+.sidebar.closed .toggle-sidebar {
+  justify-content: center; /* Center the toggle button when sidebar is collapsed */
+  margin-left: 0; /* Reset margin when sidebar is collapsed */
+}
+
+.sidebar .toggle-sidebar img {
+  width: 22px; /* Consistent size for the toggle icon */
+  height: 22px;
+}
+
+.sidebar .nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Align items to the left when expanded */
+}
+
+.sidebar.closed .nav {
+  align-items: center; /* Center items horizontally when collapsed */
+}
+
+.sidebar .nav-item {
+  display: flex;
+  align-items: center; /* Align icon and text horizontally */
+  margin-bottom: 15px;
+  cursor: pointer;
+}
+
+.sidebar .nav-item img {
+  margin-right: 10px; /* Add spacing between the icon and text */
+}
+
+.sidebar.closed .nav-item img {
+  margin-right: 0; /* Remove spacing when sidebar is collapsed */
+}
+
+.sidebar .nav-item:first-child img {
+  width: 24px; /* Slightly larger size for "New Chat" icon */
+  height: 24px;
+  margin-left: 0; /* Align to the left */
+}
+
+.sidebar .nav-item:nth-child(2) img {
+  width: 20px; /* Slightly smaller size for "Info" icon */
+  height: 20px;
+  margin-left: 0; /* Align to the left */
+}
+
+.sidebar .nav-item span {
+  font-size: 14px;
+  color: #333;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar.closed .nav-item span {
+  opacity: 0; /* Hide text when sidebar is collapsed */
+  pointer-events: none; /* Prevent interaction with hidden text */
+}
+
+.sidebar .settings {
+  display: flex;
+  align-items: center; /* Align icon and text horizontally */
+  cursor: pointer;
+}
+
+.sidebar.closed .settings {
+  align-items: center; /* Center items horizontally when collapsed */
+}
+
+.sidebar .settings img {
+  width: 24px; /* Consistent size for the settings icon */
+  height: 24px;
+  margin-right: 10px; /* Add spacing between the icon and text */
+  margin-left: 0; /* Align to the left */
+}
+
+.sidebar.closed .settings img {
+  margin-right: 0; /* Remove spacing when sidebar is collapsed */
+}
+
+.sidebar .settings span {
+  font-size: 14px;
+  color: #333;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar.closed .settings span {
+  opacity: 0; /* Hide text when sidebar is collapsed */
+  pointer-events: none; /* Prevent interaction with hidden text */
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it appears above other elements */
+}
+
+/* Modal Box */
+.modal {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 400px;
+  max-width: 90%;
+  text-align: center;
+  z-index: 1001;
+}
+
+.modal h2 {
+  margin-top: 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.modal p {
+  font-size: 16px;
+  color: #555;
+  margin: 15px 0;
+}
+
+.close-button {
+  background-color: #66ab94; /* Match the header color */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.close-button:hover {
+  background-color: #5a9b84; /* Slightly darker shade on hover */
+}
