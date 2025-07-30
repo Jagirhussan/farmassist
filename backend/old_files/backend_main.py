@@ -2,6 +2,7 @@
 from fastapi import FastAPI, Request
 import requests
 import uvicorn
+from call_llm import call_llm
 
 # Create a FastAPI app instance
 app = FastAPI()
@@ -17,10 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# URL of the Jetson server to handle LLM requests
-JETSON_URL = "http://172.23.98.136:8000/run_llm"
-
-# Define a POST endpoint to handle LLM prompts ie sending the request to the Jetson which calles the LLM
+# Define a POST endpoint to handle LLM prompts ie sending the request to the Jetson which calls the LLM
 @app.post("/ask_llm")
 async def ask_llm(request: Request):
     # Get JSON data from the request
@@ -32,10 +30,9 @@ async def ask_llm(request: Request):
     print(f"[Backend] Got prompt from frontend: {prompt}")
     
     try:
-        # Send the prompt to the Jetson server and get the response
-        res = requests.post(JETSON_URL, json={"prompt": prompt})
-        res.raise_for_status()  # Handle HTTP errors
-        return res.json()  # get the response from the Jetson server as JSON format
+        # Use the call_llm function instead of duplicating the logic
+        response = call_llm(prompt)
+        return response
     except Exception as e:
         # error catching and debugging
         print(f"[Backend] Error calling Jetson: {e}")

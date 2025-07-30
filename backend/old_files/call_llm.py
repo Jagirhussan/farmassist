@@ -1,10 +1,12 @@
 import requests
 
-JETSON_IP = "172.23.98.136"
+JETSON_IP = "172.23.104.234"
 
 def call_llm(prompt):
+	print("Opened call_llm")
 	url = f"http://{JETSON_IP}:8000/run_llm"
 	response = requests.post(url, json = {"prompt": prompt})
+	print(response)
 	return response.json()
 
 

@@ -77,8 +77,6 @@ def framer(video_path):
         frame_count += 1
 
     video.release()
-    return saved_frame_index  # ← Add this line
-
 
 
 if __name__ == "__main__":
