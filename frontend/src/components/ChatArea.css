@@ -1,6 +1,6 @@
 .chat-area {
   flex: 1;
-  background-color: #dfe9e6;
+  background-color: #dfe9e6; /* Background color for the chat area */
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -10,17 +10,25 @@
 }
 
 .chat-message {
-  background-color: #f1f1f1;
-  padding: 10px 15px;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  max-width: calc(100% - 200px);
+  display: inline-block; /* Make the bubble size dynamic */
+  background-color: #f1f1f1; /* Default bubble color */
+  padding: 10px 15px; /* Padding inside the bubble */
+  border-radius: 15px; /* Rounded corners */
+  margin-bottom: 10px; /* Space between messages */
+  max-width: 80%; /* Limit the bubble width */
+  word-wrap: break-word; /* Wrap long words */
   font-size: 16px;
 }
 
 .chat-message.user {
-  background-color: #dce5e1;
-  align-self: flex-end;
+  background-color: #dce5e1; /* User bubble color */
+  align-self: flex-end; /* Align user messages to the right */
+}
+
+.chat-message.bot {
+  background-color: #66ab94; /* Bot bubble color */
+  color: white; /* Text color for bot messages */
+  align-self: flex-start; /* Align bot messages to the left */
 }
 
 .typing-indicator {
