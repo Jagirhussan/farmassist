@@ -18,7 +18,7 @@ def load_models():
     if tokenizer is None or model is None or model_encoder is None:
         print("[LLM] Loading models...")
         tokenizer = AutoTokenizer.from_pretrained("TinyLlama/TinyLlama-1.1B-Chat-v1.0")
-        model = AutoModelForCausalLM.from_pretrained("TinyLlama/TinyLlama-1.1B-Chat-v1.0")
+        model = AutoModelForCausalLM.from_pretrained("TinyLlama/TinyLlama-1.1B-Chat-v1.0", device_map="cuda")
         model_encoder = SentenceTransformer("all-MiniLM-L6-v2")
 
         # Set up pad token if it doesn't exist
