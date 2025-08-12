@@ -81,7 +81,7 @@ def run_llm(prompt):
             tokenize=True,
             return_dict=True,
             return_tensors="pt"
-        )
+        ).to("cuda")
         
         # Generate response
         with torch.no_grad():
