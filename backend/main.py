@@ -1,4 +1,3 @@
-# backend/main.py
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
@@ -6,13 +5,13 @@ from llm_utils import run_llm
 
 app = FastAPI()
 
-# Enable CORS
+# Enable CORS for all origins and allow POST with Content-Type headers
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Frontend origin
-    allow_credentials=True,
-    allow_methods=["POST"],
-    allow_headers=["Content-Type"],
+    allow_origins=["*"],           # Allow requests from any origin (for dev/testing)
+    allow_credentials=True,        
+    allow_methods=["POST"],        # Only allow POST methods
+    allow_headers=["Content-Type"] # Allow Content-Type header in requests
 )
 
 @app.post("/ask_llm")
@@ -22,7 +21,6 @@ async def ask_llm(request: Request):
     print(f"[Backend] Got prompt: {prompt}")
 
     try:
-        # Call your LLM here
         output = run_llm(prompt)
         return {"output": output}
     except Exception as e:
