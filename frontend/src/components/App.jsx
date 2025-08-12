@@ -13,7 +13,7 @@ function App() {
     setMessages(newMessages);
 
     try {
-      const response = await fetch("http://172.23.104.234:5050/ask_llm", {
+      const response = await fetch("http://172.23.6.60:5050/ask_llm", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
