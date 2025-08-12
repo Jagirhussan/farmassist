@@ -17,9 +17,13 @@ def load_models():
 
     if tokenizer is None or model is None or model_encoder is None:
         print("[LLM] Loading models...")
+        device = torch.device("cuda")
         tokenizer = AutoTokenizer.from_pretrained("TinyLlama/TinyLlama-1.1B-Chat-v1.0")
-        model = AutoModelForCausalLM.from_pretrained("TinyLlama/TinyLlama-1.1B-Chat-v1.0", device_map="cuda")
-        model_encoder = SentenceTransformer("all-MiniLM-L6-v2")
+        model = AutoModelForCausalLM.from_pretrained("TinyLlama/TinyLlama-1.1B-Chat-v1.0").to(device)
+        print("[LLM] Loaded tinyllama to ", device)
+        model_encoder = SentenceTransformer("all-MiniLM-L6-v2").to(device)
+        print("[LLM] Loaded sentence transformer to ", device)
+
 
         # Set up pad token if it doesn't exist
         if tokenizer.pad_token is None:
@@ -56,6 +60,8 @@ def run_llm(prompt):
     """Process a prompt with the loaded LLM model, optionally with video context"""
     load_models()  # Ensure model is loaded
     
+    device = torch.device("cuda")
+    
     print(f"[LLM] Processing prompt: {prompt}")
     
     try:
@@ -81,7 +87,7 @@ def run_llm(prompt):
             tokenize=True,
             return_dict=True,
             return_tensors="pt"
-        ).to("cuda")
+        ).to(device)
         
         # Generate response
         with torch.no_grad():
