@@ -20,10 +20,12 @@ def load_models():
     """Load the LLM, database, and caption encoding models once when the server starts"""
     global processor, model, db, model_encoder
 
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     if processor is None or model is None or db is None or model_encoder is None:
         processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base", use_fast=True)
         # model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base").to("cuda" if torch.cuda.is_available() else "cpu")
-        model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base", device_map="cuda")
+        model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base").to(device)
         model_encoder = SentenceTransformer('all-MiniLM-L6-v2')
 
 def framer(video_path):
