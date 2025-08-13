@@ -26,7 +26,7 @@ def load_models():
         processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base", use_fast=True)
         # model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base").to("cuda" if torch.cuda.is_available() else "cpu")
         model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base").to(device)
-        model_encoder = SentenceTransformer('all-MiniLM-L6-v2')
+        model_encoder = SentenceTransformer('all-MiniLM-L6-v2').to(device)
 
 def framer(video_path):
 
