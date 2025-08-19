@@ -38,6 +38,7 @@ def framer(video_path):
 
     # initialise the model
     load_models()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # initialise the time
     start_time = get_video_creation_time(video_path)
@@ -55,7 +56,7 @@ def framer(video_path):
             rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             image = Image.fromarray(rgb_frame)
 
-            inputs = processor(images=image, return_tensors="pt").to(model.device)
+            inputs = processor(images=image, return_tensors="pt").to(device)
 
             with torch.no_grad():
                 output = model.generate(**inputs)
