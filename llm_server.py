@@ -14,6 +14,7 @@ async def run_llm(request: Request):
 	
 	#get the response from the LLM (this needs to be edited/ a response actually got /llm actually called idk)
 	response = {"output": f"LLM processed: {prompt}"}
+	print("LLM Server used")
 	
 	
 	#debugging checking to make sure this is working - don't return this dummy if you're actually geting a response from the llm 
