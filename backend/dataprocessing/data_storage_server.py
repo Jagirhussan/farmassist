@@ -4,11 +4,11 @@ from chromadb.config import Settings
 
 app = FastAPI()
 
-# Initialize ChromaDB
+# Initialize ChromaDB with the new client configuration
 client = chromadb.Client(
     Settings(
-        chroma_db_impl="duckdb+parquet",
         persist_directory="./chroma_storage",  # Directory to store the database
+        anonymized_telemetry=False,  # Disable telemetry (optional)
     )
 )
 collection = client.get_or_create_collection(name="video_frames")
