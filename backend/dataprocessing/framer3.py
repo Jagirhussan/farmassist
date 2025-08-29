@@ -8,13 +8,14 @@ from PIL import Image
 import torch
 import sys
 import chromadb
-from sentence_transformers import SentenceTransformer 
+from sentence_transformers import SentenceTransformer
 
 # Global variables to store the model (loaded once)
 processor = None
 model = None
 db = None
 model_encoder = None
+
 
 def load_models():
     """Load the LLM, database, and caption encoding models once when the server starts"""
@@ -23,10 +24,15 @@ def load_models():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     if processor is None or model is None or db is None or model_encoder is None:
-        processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base", use_fast=True)
+        processor = BlipProcessor.from_pretrained(
+            "Salesforce/blip-image-captioning-base", use_fast=True
+        )
         # model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base").to("cuda" if torch.cuda.is_available() else "cpu")
-        model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base").to(device)
-        model_encoder = SentenceTransformer('all-MiniLM-L6-v2').to(device)
+        model = BlipForConditionalGeneration.from_pretrained(
+            "Salesforce/blip-image-captioning-base"
+        ).to(device)
+        model_encoder = SentenceTransformer("all-MiniLM-L6-v2").to(device)
+
 
 def framer(video_path):
 
@@ -34,7 +40,6 @@ def framer(video_path):
     video = cv2.VideoCapture(video_path)
     fps = video.get(cv2.CAP_PROP_FPS)
     frame_count = 0
-    saved_frame_index = 0
 
     # initialise the model
     load_models()
@@ -44,13 +49,13 @@ def framer(video_path):
     start_time = get_video_creation_time(video_path)
 
     # being splitting the video into frames and processing each frame
+    processed_data = []  # Store processed captions and embeddings
+
     while video.isOpened():
-    
         ret, frame = video.read()
         if not ret:
             break
-        
-        # every 30 seconds, save the frame and process it
+
         if frame_count % int(fps * 30) == 0:
             # save the frame as a rbg array
             rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -60,26 +65,16 @@ def framer(video_path):
 
             with torch.no_grad():
                 output = model.generate(**inputs)
-                response = processor.decode(output[0], skip_special_tokens=True)   
-                #print(response)
-        
+                response = processor.decode(output[0], skip_special_tokens=True)
+
             # embed the response and save it to a database.
             embedded_response = model_encoder.encode(response)
-            #print(embedded_response)
+            processed_data.append({"caption": response, "embedding": embedded_response})
 
-            collection = db.get_or_create_collection(name="video_frames", metadata={'reset': True})
-
-            collection.add(
-                documents=[response],
-                embeddings=embedded_response,
-                ids=[f"{start_time + timedelta(seconds=saved_frame_index)}"]
-                )
-
-        
-        saved_frame_index += 1
         frame_count += 1
 
     video.release()
+    return processed_data
 
 
 if __name__ == "__main__":
@@ -90,13 +85,3 @@ if __name__ == "__main__":
     video_path = sys.argv[1]
     framer(video_path)
     print("Finished extracting frames and metadata.")
-
-
-
-
-        
-
-
-
-
-
