@@ -166,3 +166,24 @@
 .close-button:hover {
   background-color: #5a9b84; /* Slightly darker shade on hover */
 }
+
+.sidebar .nav-item img {
+  width: 22px; /* consistent icon size */
+  height: 22px;
+  margin-right: 10px;
+}
+
+.sidebar.closed .nav-item img {
+  margin-right: 0;
+}
+
+.sidebar .nav-item span {
+  font-size: 14px;
+  color: #333;
+}
+
+/* Optional tweak to make upload icon same size as info icon */
+.sidebar .nav-item:nth-child(3) img {
+  width: 20px;
+  height: 20px;
+}

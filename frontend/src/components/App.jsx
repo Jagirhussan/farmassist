@@ -8,6 +8,12 @@ import "../App.css";
 function App() {
   const [messages, setMessages] = useState([]);
 
+  const handleUpload = (videoName) => {
+    // Handle the video upload logic here
+    // You can update the state or send the video to the backend server
+    console.log("Video uploaded:", videoName);
+  };
+
   const handleSend = async (userMessage) => {
     const newMessages = [...messages, { sender: "user", text: userMessage }];
     setMessages(newMessages);
