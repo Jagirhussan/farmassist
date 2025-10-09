@@ -2,8 +2,15 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from llm_utils import run_llm
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup code here (e.g., load models)
+    yield
+    # Shutdown code here
+
+app = FastAPI(lifespan=lifespan)
 
 # Enable CORS for all origins and allow POST with Content-Type headers
 app.add_middleware(
