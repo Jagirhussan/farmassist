@@ -1,12 +1,13 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from llm_utils import run_llm
+from llm_utils import run_llm, load_models
 from contextlib import asynccontextmanager
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup code here (e.g., load models)
+    load_models()
     yield
     # Shutdown code here
 
