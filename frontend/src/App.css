@@ -1,3 +1,11 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* prevents the whole page from scrolling */
+}
+
 .App {
   text-align: center;
 }
@@ -40,12 +48,14 @@
 .app {
   display: flex;
   height: 100vh;
+  overflow: hidden;
 }
 
 .main {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 0; /* IMPORTANT: allows children to scroll internally */
 }
 
 .chat-area {
@@ -66,7 +76,7 @@
   margin-bottom: 10px;
   max-width: calc(100% - 200px);
   font-size: 16px;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 .chat-message.user {
