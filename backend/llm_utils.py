@@ -98,7 +98,10 @@ def run_llm(prompt):
 
         ##TODO: Tweak the context format so the chatbot understands the link to action and time. 
         # formated as: "At time <timestamp>, <observation>"
-        context = [f"At time {ts}, {text}" for ts, text in zip(timestamp, retrieved_texts)]
+        if retrieved_texts is not None and timestamp is not None:
+            context = [f"At time {ts}, {text}" for ts, text in zip(timestamp, retrieved_texts)]
+        else:
+            context = []
 
         # Format as chat messages for TinyLlama with system message
         messages = [
