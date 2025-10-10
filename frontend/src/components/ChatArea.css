@@ -10,12 +10,6 @@
   box-sizing: border-box;
 }
 
-/* Configurable sizes */
-:root {
-  --chat-box-height: 600px;
-  --chat-box-max-width: 1250px; /* make white box wider */
-}
-
 /* White box that scrolls internally */
 .chat-messages-box {
   background-color: #fff;
