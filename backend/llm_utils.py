@@ -85,25 +85,27 @@ def retrieve_context(query, n=3, threshold=0.5):
         return None, None
 
 def run_llm(prompt):
-    """Process a prompt with the loaded LLM model, optionally with video context"""
-    # load_models()  # Ensure model is loaded
-    
+    """Process a prompt with the loaded LLM model, optionally with video context"""    
     device = torch.device("cuda")
     
     print(f"[LLM] Processing prompt: {prompt}")
+
+    maxtokens = None
+    temp = None
     
     try:
         # get the most relevant observation from the data and it's timestamp.
         retrieved_texts, timestamp = retrieve_context(prompt, n=3, threshold=0.3)
 
-        ##TODO: Tweak the context format so the chatbot understands the link to action and time. 
         # formated as: "At time <timestamp>, <observation>"
         if retrieved_texts is not None and timestamp is not None:
             context = [f"At time {ts}, {text}" for ts, text in zip(timestamp, retrieved_texts)]
+            maxtokens = 100 # set a higher max token limit when context is available
+            temp = 0.7 # set a higher temperature for more creative responses
         else:
-            context = ['There is no relevant context available. '
-            'Do not reference any context in your answer.'
-            'Provide a concise answer based only on your training data.']
+            context = ['Provide a concise and friendly answer to the query.']
+            maxtokens = 60  # enforce a concise answer when no context is available
+            temp = 0.4  # lower temperature for more deterministic answers
 
         # Format as chat messages for TinyLlama with system message
         messages = [
@@ -125,11 +127,18 @@ def run_llm(prompt):
             return_tensors="pt"
         ).to(device)
         
+
+        # Set default values if not provided
+        if maxtokens is None:
+            maxtokens = 100  # default value if not set
+        if temp is None:
+            temp = 0.7  # default value if not set
+        
         # Generate response
         with torch.no_grad():
             outputs = model.generate(
                 **inputs,
-                max_new_tokens=150,  # Use max_new_tokens instead of max_length
+                max_new_tokens=maxtokens, 
                 temperature=0.7,
                 do_sample=True,
                 pad_token_id=tokenizer.eos_token_id,
