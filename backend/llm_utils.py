@@ -73,6 +73,10 @@ def retrieve_context(query, n=3, threshold=0.5):
         # ensure if n is larger than available relevant indices, we don't exceed bounds
         if n > len(relevant_indices_sorted):
             n = len(relevant_indices_sorted)
+
+        data['documents'] = np.array(data['documents'])
+        data['ids'] = np.array(data['ids'])
+        
         retrieved, timestamp = data['documents'][relevant_indices_sorted[:n]], data['ids'][relevant_indices_sorted[:n]]
         print(f"[LLM] Successfully retrieved context: {retrieved}, timestamp: {timestamp}")
         return retrieved, timestamp
