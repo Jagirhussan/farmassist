@@ -1,8 +1,14 @@
 from fastapi import FastAPI, Request
+from fastapi import File, UploadFile
+import os
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from llm_utils import run_llm, load_models
 from contextlib import asynccontextmanager
+
+UPLOAD_FOLDER = "backend/dataprocessing/videos"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -11,16 +17,18 @@ async def lifespan(app: FastAPI):
     yield
     # Shutdown code here
 
+
 app = FastAPI(lifespan=lifespan)
 
 # Enable CORS for all origins and allow POST with Content-Type headers
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],           # Allow requests from any origin (for dev/testing)
-    allow_credentials=True,        
-    allow_methods=["POST"],        # Only allow POST methods
-    allow_headers=["Content-Type"] # Allow Content-Type header in requests
+    allow_origins=["*"],  # Allow requests from any origin (for dev/testing)
+    allow_credentials=True,
+    allow_methods=["POST"],  # Only allow POST methods
+    allow_headers=["Content-Type"],  # Allow Content-Type header in requests
 )
+
 
 @app.post("/ask_llm")
 async def ask_llm(request: Request):
@@ -34,6 +42,22 @@ async def ask_llm(request: Request):
     except Exception as e:
         print(f"[Backend] Error calling LLM: {e}")
         return {"output": f"Backend error: {e}"}
+
+
+@app.post("/upload_video")
+async def upload_video(file: UploadFile = File(...)):
+    if not file.filename:
+        return {"error": "No file selected"}
+
+    save_path = os.path.join(UPLOAD_FOLDER, file.filename)
+
+    # Save the uploaded file
+    with open(save_path, "wb") as f:
+        content = await file.read()
+        f.write(content)
+
+    return {"message": "Upload successful", "filename": file.filename}
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=5050)

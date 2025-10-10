@@ -83,6 +83,34 @@ function Sidebar({ isOpen, toggleSidebar }) {
               id="video-upload-input"
               accept="video/*"
               style={{ marginBottom: "15px" }}
+              onChange={async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const formData = new FormData();
+                formData.append("video", file);
+
+                try {
+                  const response = await fetch(
+                    "http://172.23.6.60:5050/upload_video",
+                    {
+                      method: "POST",
+                      body: formData,
+                    }
+                  );
+
+                  if (!response.ok) {
+                    throw new Error("Upload failed");
+                  }
+
+                  const data = await response.json();
+                  alert(`Upload successful: ${data.filename}`);
+                  closeUpload();
+                } catch (err) {
+                  console.error(err);
+                  alert("Error uploading video");
+                }
+              }}
             />
             <div>
               <button className="close-button" onClick={closeUpload}>
