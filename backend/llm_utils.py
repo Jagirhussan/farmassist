@@ -76,7 +76,7 @@ def retrieve_context(query, n=3, threshold=0.5):
 
         data['documents'] = np.array(data['documents'])
         data['ids'] = np.array(data['ids'])
-        
+
         retrieved, timestamp = data['documents'][relevant_indices_sorted[:n]], data['ids'][relevant_indices_sorted[:n]]
         print(f"[LLM] Successfully retrieved context: {retrieved}, timestamp: {timestamp}")
         return retrieved, timestamp
@@ -94,17 +94,20 @@ def run_llm(prompt):
     
     try:
         # get the most relevant observation from the data and it's timestamp.
-        retrieved_texts, timestamp = retrieve_context(prompt, n=3, threshold=0.5)
+        retrieved_texts, timestamp = retrieve_context(prompt, n=3, threshold=0.3)
+
+        ##TODO: Tweak the context format so the chatbot understands the link to action and time. 
+        # formated as: "At time <timestamp>, <observation>"
+        context = [f"At time {ts}, {text}" for ts, text in zip(timestamp, retrieved_texts)]
 
         # Format as chat messages for TinyLlama with system message
         messages = [
-            {"role": "system", "content": "You are a helpful AI assistant specalised in animal farming."
+            {"role": "system", "content": "You are an extremely kind and helpful AI assistant specalised in animal farming."
              "Provide one answer using the provided context, if there is any available. "
              "Only answer the query asked by the user. "
              "Do not make up information. "
              "Provide a concise answer. "
-             f"Information that could be helpful in your response: {retrieved_texts}"
-             f"Timestamps related to the provided context are here: {timestamp}"},
+             f"Information that could be helpful in your response: {context}"},
             {"role": "user", "content": prompt}
         ]
         
