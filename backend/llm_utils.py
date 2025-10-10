@@ -4,7 +4,8 @@ import torch
 from sentence_transformers import SentenceTransformer
 import chromadb
 import numpy as np
-
+from numpy import dot
+from numpy.linalg import norm
 
 # Global variables to store the model (loaded once)
 tokenizer = None
@@ -43,7 +44,7 @@ def retrieve_data():
     print(f"[LLM] Retrieved {len(collection.get()['ids'])} items from ChromaDB.")
     return collection.get(include=['documents', 'embeddings'])
 
-def retrieve_context(query):
+def retrieve_context(query, n=3, threshold=0.5):
     """Retrieve relevant context from ChromaDB based on the query."""
     print(f"[LLM] Retrieving context for query: {query}")
     # embed the query to the same format as the stored embeddings
@@ -51,15 +52,31 @@ def retrieve_context(query):
     # retrieve the video frame data
     data = retrieve_data()
     # calculate the similarities with the cosine similarity
-    similarities = model_encoder.similarity(np.array(data['embeddings'], dtype=np.float32), np.array(query_embedded, dtype=np.float32))
-    # retrieve the most similar document for reference
-    retrieved, timestamp = data['documents'][similarities.argmax().item()], data['ids'][similarities.argmax().item()]
-    print(f"[LLM] Successfully retrieved context: {retrieved}, timestamp: {timestamp}")
-    return retrieved, timestamp
+    # similarities = model_encoder.similarity(np.array(data['embeddings'], dtype=np.float32), np.array(query_embedded, dtype=np.float32))
+
+    similarities = np.array([
+        dot(e, query_embedded) / (norm(e) * norm(query_embedded))
+        for e in data["embeddings"]
+    ])
+
+    # check which similarities are higher than a threshold (e.g., 0.5)
+    relevant_indices = np.where(similarities > threshold)[0]
+
+    # retrieve the most similar frames to be the context with a max of n items
+    if relevant_indices.size > 0:
+        # ensure if n is larger than available relevant indices, we don't exceed bounds
+        if n > len(relevant_indices):
+            n = len(relevant_indices)
+        retrieved, timestamp = data['documents'][relevant_indices[:n]], data['ids'][relevant_indices[:n]]
+        print(f"[LLM] Successfully retrieved context: {retrieved}, timestamp: {timestamp}")
+        return retrieved, timestamp
+    else:
+        print("[LLM] No relevant context found.")
+        return None, None
 
 def run_llm(prompt):
     """Process a prompt with the loaded LLM model, optionally with video context"""
-    load_models()  # Ensure model is loaded
+    # load_models()  # Ensure model is loaded
     
     device = torch.device("cuda")
     
@@ -67,7 +84,7 @@ def run_llm(prompt):
     
     try:
         # get the most relevant observation from the data and it's timestamp.
-        retrieved_texts, timestamp = retrieve_context(prompt)
+        retrieved_texts, timestamp = retrieve_context(prompt, n=3, threshold=0.5)
 
         # Format as chat messages for TinyLlama with system message
         messages = [
