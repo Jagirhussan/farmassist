@@ -91,12 +91,12 @@ def run_llm(prompt):
         # Format as chat messages for TinyLlama with system message
         messages = [
             {"role": "system", "content": "You are a helpful AI assistant specalised in animal farming."
-             "Provide one Answer ONLY the following query based on the context provided. "
-             "Do not generate or answer any other questions. "
-             "Do not make up or infer any information that is not directly stated in the context. "
-             "Provide a concise answer."
-             f"The context is: {retrieved_texts}"
-             f"This happened at this time: {timestamp}"},
+             "Provide one answer using the provided context, if there is any available. "
+             "Only answer the query asked by the user. "
+             "Do not make up information. "
+             "Provide a concise answer. "
+             f"Information that could be helpful in your response: {retrieved_texts}"
+             f"Timestamps related to the provided context are here: {timestamp}"},
             {"role": "user", "content": prompt}
         ]
         
