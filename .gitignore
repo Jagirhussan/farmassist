@@ -1,1 +1,4 @@
 backend/speechbrain-emotion-recognition-openvino/
+# Ignore submodules
+backend/pytorch/
+backend/vision/
