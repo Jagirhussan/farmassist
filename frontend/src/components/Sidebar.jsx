@@ -19,6 +19,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
 
   const closeInfo = () => setShowInfo(false);
   const closeUpload = () => setShowUpload(false);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   return (
     <>
@@ -83,36 +84,44 @@ function Sidebar({ isOpen, toggleSidebar }) {
               id="video-upload-input"
               accept="video/*"
               style={{ marginBottom: "15px" }}
-              onChange={async (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-
-                const formData = new FormData();
-                formData.append("video", file);
-
-                try {
-                  const response = await fetch(
-                    "http://172.23.6.60:5050/upload_video",
-                    {
-                      method: "POST",
-                      body: formData,
-                    }
-                  );
-
-                  if (!response.ok) {
-                    throw new Error("Upload failed");
+              onChange={(e) => setSelectedFile(e.target.files[0])}
+            />
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button
+                className="upload-button"
+                onClick={async () => {
+                  if (!selectedFile) {
+                    alert("Please select a file first.");
+                    return;
                   }
 
-                  const data = await response.json();
-                  alert(`Upload successful: ${data.filename}`);
-                  closeUpload();
-                } catch (err) {
-                  console.error(err);
-                  alert("Error uploading video");
-                }
-              }}
-            />
-            <div>
+                  const formData = new FormData();
+                  formData.append("file", selectedFile);
+
+                  try {
+                    // Use the current host dynamically instead of hardcoding IP
+                    const response = await fetch(
+                      `${window.location.origin}/upload_video`,
+                      {
+                        method: "POST",
+                        body: formData,
+                      }
+                    );
+
+                    if (!response.ok) throw new Error("Upload failed");
+
+                    const data = await response.json();
+                    alert(`Upload successful: ${data.filename}`);
+                    closeUpload();
+                  } catch (err) {
+                    console.error(err);
+                    alert("Error uploading video");
+                  }
+                }}
+              >
+                Upload
+              </button>
+
               <button className="close-button" onClick={closeUpload}>
                 Close
               </button>
