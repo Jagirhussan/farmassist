@@ -59,6 +59,8 @@ def retrieve_context(query, n=3, threshold=0.5):
         for e in data["embeddings"]
     ])
 
+    print(f"[LLM] Similarities: {similarities}")
+
     # check which similarities are higher than a threshold (e.g., 0.5)
     relevant_indices = np.where(similarities > threshold)[0]
 
