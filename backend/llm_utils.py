@@ -62,14 +62,17 @@ def retrieve_context(query, n=3, threshold=0.5):
     print(f"[LLM] Similarities: {similarities}")
 
     # check which similarities are higher than a threshold (e.g., 0.5)
-    relevant_indices = np.where(similarities > threshold)[0]
+    relevant_indices = np.where(similarities > threshold)
+
+    # order the relevant indices by similarity score in descending order
+    relevant_indices_sorted = np.sort(relevant_indices[0])[::-1]
 
     # retrieve the most similar frames to be the context with a max of n items
     if relevant_indices.size > 0:
         # ensure if n is larger than available relevant indices, we don't exceed bounds
-        if n > len(relevant_indices):
-            n = len(relevant_indices)
-        retrieved, timestamp = data['documents'][relevant_indices[:n]], data['ids'][relevant_indices[:n]]
+        if n > len(relevant_indices_sorted):
+            n = len(relevant_indices_sorted)
+        retrieved, timestamp = data['documents'][relevant_indices_sorted[:n]], data['ids'][relevant_indices_sorted[:n]]
         print(f"[LLM] Successfully retrieved context: {retrieved}, timestamp: {timestamp}")
         return retrieved, timestamp
     else:
