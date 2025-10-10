@@ -44,20 +44,5 @@ async def ask_llm(request: Request):
         return {"output": f"Backend error: {e}"}
 
 
-@app.post("/upload_video")
-async def upload_video(file: UploadFile = File(...)):
-    if not file.filename:
-        return {"error": "No file selected"}
-
-    save_path = os.path.join(UPLOAD_FOLDER, file.filename)
-
-    # Save the uploaded file
-    with open(save_path, "wb") as f:
-        content = await file.read()
-        f.write(content)
-
-    return {"message": "Upload successful", "filename": file.filename}
-
-
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=5050)

@@ -4,22 +4,48 @@ import "./Sidebar.css";
 function Sidebar({ isOpen, toggleSidebar }) {
   const [showInfo, setShowInfo] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  // Load the Amy Jetson URL from environment variables
+  const AMY_JETSON_URL = process.env.REACT_APP_AMY_IP;
 
   const handleNewChat = () => {
     window.location.reload();
   };
 
-  const handleInfoClick = () => {
-    setShowInfo(true);
-  };
-
-  const handleUploadClick = () => {
-    setShowUpload(true);
-  };
-
+  const handleInfoClick = () => setShowInfo(true);
+  const handleUploadClick = () => setShowUpload(true);
   const closeInfo = () => setShowInfo(false);
-  const closeUpload = () => setShowUpload(false);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const closeUpload = () => {
+    setShowUpload(false);
+    setSelectedFile(null);
+  };
+
+  const handleUploadSubmit = async () => {
+    if (!selectedFile) {
+      alert("Please select a file first");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    try {
+      const response = await fetch(`${AMY_JETSON_URL}/upload_video`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error("Upload failed");
+
+      const data = await response.json();
+      alert(`Upload successful: ${data.filename}`);
+      closeUpload();
+    } catch (err) {
+      console.error(err);
+      alert("Error uploading video");
+    }
+  };
 
   return (
     <>
@@ -81,47 +107,14 @@ function Sidebar({ isOpen, toggleSidebar }) {
             <p>Select a video file to upload.</p>
             <input
               type="file"
-              id="video-upload-input"
               accept="video/*"
               style={{ marginBottom: "15px" }}
               onChange={(e) => setSelectedFile(e.target.files[0])}
             />
             <div style={{ display: "flex", gap: "10px" }}>
-              <button
-                className="upload-button"
-                onClick={async () => {
-                  if (!selectedFile) {
-                    alert("Please select a file first.");
-                    return;
-                  }
-
-                  const formData = new FormData();
-                  formData.append("file", selectedFile);
-
-                  try {
-                    // Use the current host dynamically instead of hardcoding IP
-                    const response = await fetch(
-                      `${window.location.origin}/upload_video`,
-                      {
-                        method: "POST",
-                        body: formData,
-                      }
-                    );
-
-                    if (!response.ok) throw new Error("Upload failed");
-
-                    const data = await response.json();
-                    alert(`Upload successful: ${data.filename}`);
-                    closeUpload();
-                  } catch (err) {
-                    console.error(err);
-                    alert("Error uploading video");
-                  }
-                }}
-              >
+              <button className="upload-button" onClick={handleUploadSubmit}>
                 Upload
               </button>
-
               <button className="close-button" onClick={closeUpload}>
                 Close
               </button>
