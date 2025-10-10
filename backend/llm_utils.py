@@ -101,14 +101,16 @@ def run_llm(prompt):
         if retrieved_texts is not None and timestamp is not None:
             context = [f"At time {ts}, {text}" for ts, text in zip(timestamp, retrieved_texts)]
         else:
-            context = []
+            context = ['There is no relevant context available. '
+            'Do not reference any context in your answer.'
+            'Provide a concise answer based only on your training data.']
 
         # Format as chat messages for TinyLlama with system message
         messages = [
             {"role": "system", "content": "You are an extremely kind and helpful AI assistant specalised in animal farming."
              "Provide one answer using the provided context, if there is any available. "
              "Only answer the query asked by the user. "
-             "Do not make up information. "
+             "Do NOT make up information. Never lie. If you don't know, do not attempt to answer. "
              "Provide a concise answer. "
              f"Information that could be helpful in your response: {context}"},
             {"role": "user", "content": prompt}
