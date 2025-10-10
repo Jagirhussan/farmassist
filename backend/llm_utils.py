@@ -65,7 +65,8 @@ def retrieve_context(query, n=3, threshold=0.5):
     relevant_indices = np.where(similarities > threshold)
 
     # order the relevant indices by similarity score in descending order
-    relevant_indices_sorted = np.sort(relevant_indices[0])[::-1]
+    relevant_indices_sorted = np.array(np.sort(relevant_indices[0])[::-1])
+    print(f"[LLM] Relevant indices (sorted): {relevant_indices_sorted}")
 
     # retrieve the most similar frames to be the context with a max of n items
     if relevant_indices.size > 0:
