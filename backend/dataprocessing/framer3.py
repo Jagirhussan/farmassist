@@ -27,7 +27,6 @@ def load_models():
         processor = BlipProcessor.from_pretrained(
             "Salesforce/blip-image-captioning-base", use_fast=True
         )
-        # model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base").to("cuda" if torch.cuda.is_available() else "cpu")
         model = BlipForConditionalGeneration.from_pretrained(
             "Salesforce/blip-image-captioning-base"
         ).to(device)
@@ -64,7 +63,7 @@ def framer(video_path):
             inputs = processor(images=image, return_tensors="pt").to(device)
 
             with torch.no_grad():
-                output = model.generate(**inputs)
+                output = model.generate(**inputs, max_new_tokens=50)
                 response = processor.decode(output[0], skip_special_tokens=True)
 
             # embed the response and save it to a database.

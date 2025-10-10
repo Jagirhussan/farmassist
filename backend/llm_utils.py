@@ -85,9 +85,7 @@ def retrieve_context(query, n=3, threshold=0.5):
         return None, None
 
 def run_llm(prompt):
-    """Process a prompt with the loaded LLM model, optionally with video context"""
-    # load_models()  # Ensure model is loaded
-    
+    """Process a prompt with the loaded LLM model, optionally with video context"""    
     device = torch.device("cuda")
     
     print(f"[LLM] Processing prompt: {prompt}")
