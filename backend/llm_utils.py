@@ -111,7 +111,7 @@ def run_llm(prompt):
 
     try:
         # get the most relevant observation from the data and it's timestamp.
-        retrieved_texts, timestamp = retrieve_context(prompt, n=3, threshold=0.3)
+        retrieved_texts, timestamp = retrieve_context(prompt, n=3, threshold=0.01)
 
         # formated as: "At time <timestamp>, <observation>"
         if retrieved_texts is not None and timestamp is not None:
@@ -123,7 +123,7 @@ def run_llm(prompt):
         else:
             context = ["Provide a concise and friendly answer to the query."]
             maxtokens = 60  # enforce a concise answer when no context is available
-            temp = 0.3  # lower temperature for more deterministic answers
+            temp = 0.4  # lower temperature for more deterministic answers
 
         # Format as chat messages for TinyLlama with system message
         messages = [
