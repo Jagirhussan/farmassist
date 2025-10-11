@@ -5,23 +5,31 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from framer3 import framer
+from dotenv import load_dotenv
 import asyncio
 
-# ---------------------
-# CONFIGURATION
-# ---------------------
-DATA_STORAGE_IP = "172.23.117.196"  # Hardcoded Alex Jetson IP
-DATA_STORAGE_PORT = 5051
-UPLOAD_FOLDER = "/videos"  # Hardcoded absolute path
+# --- Load environment variables from .env ---
+env_path = os.path.join(os.path.dirname(__file__), "..", ".env")
+load_dotenv(env_path)
 
+# Get IP and port for Alex Jetson storage server from .env
+DATA_STORAGE_IP = os.getenv("REACT_APP_ALEX_IP", "127.0.0.1")
+DATA_STORAGE_PORT = int(os.getenv("REACT_APP_ALEX_PORT", 5051))
+
+# Relative path to videos folder (relative to this script)
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "videos")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 print(f"[Debug] Upload folder path: {UPLOAD_FOLDER}", flush=True)
+print(
+    f"[Debug] Storage server IP: {DATA_STORAGE_IP}, Port: {DATA_STORAGE_PORT}",
+    flush=True,
+)
+print(f"[Debug] Current working directory: {os.getcwd()}", flush=True)
 
-# ---------------------
-# FASTAPI SETUP
-# ---------------------
+# --- FastAPI app ---
 app = FastAPI()
 
+# Allow CORS from frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -31,76 +39,72 @@ app.add_middleware(
 )
 
 
-# ---------------------
-# UTILITY FUNCTIONS
-# ---------------------
-def secure_filename(filename: str) -> str:
-    """Replace unsafe characters in filename."""
+# --- Helper functions ---
+def secure_filename(filename):
+    """Sanitize filename to remove unsafe characters."""
     return re.sub(r"[^A-Za-z0-9._-]", "_", filename)
 
 
-def send_to_storage(data: dict):
-    """Send processed data to storage server."""
+def send_to_storage(data):
+    """Send processed data to the storage server on Alex Jetson."""
     try:
-        response = requests.post(
-            f"http://{DATA_STORAGE_IP}:{DATA_STORAGE_PORT}/store_data", json=data
-        )
+        url = f"http://{DATA_STORAGE_IP}:{DATA_STORAGE_PORT}/store_data"
+        response = requests.post(url, json=data)
         if response.status_code == 200:
-            print("[Debug] Data sent successfully!", flush=True)
+            print(f"[Debug] Data sent successfully to {url}", flush=True)
         else:
             print(
                 f"[Debug] Failed to send data: {response.status_code} - {response.text}",
                 flush=True,
             )
     except Exception as e:
-        print(f"[Debug] Error sending data: {e}", flush=True)
+        print(f"[Debug] Error sending data to storage server: {e}", flush=True)
 
 
-def process_video(video_path: str):
-    """Process video and send results to storage."""
-    print(f"[Amy] Processing video: {video_path}", flush=True)
-    framer(video_path)
+def process_video(video_path):
+    """Process a video and send results to storage."""
+    abs_path = os.path.abspath(video_path)
+    print(f"[Amy] Processing video: {abs_path}", flush=True)
+    framer(abs_path)  # Call framer with absolute path
 
+    # Example data to send
     data = {
-        "video_path": video_path,
-        "captions": ["Caption 1", "Caption 2"],  # Replace with real captions
-        "embeddings": [[0.1, 0.2], [0.3, 0.4]],  # Replace with real embeddings
+        "video_path": abs_path,
+        "captions": ["Caption 1", "Caption 2"],  # replace with real captions
+        "embeddings": [[0.1, 0.2], [0.3, 0.4]],  # replace with real embeddings
     }
-
     send_to_storage(data)
 
 
-# ---------------------
-# FASTAPI ENDPOINT
-# ---------------------
+async def async_process_video(video_path):
+    """Run process_video asynchronously."""
+    await asyncio.to_thread(process_video, video_path)
+
+
+# --- FastAPI endpoint ---
 @app.post("/upload_video")
 async def upload_video(file: UploadFile = File(...)):
     filename = secure_filename(file.filename)
     save_path = os.path.join(UPLOAD_FOLDER, filename)
+    save_path = os.path.abspath(save_path)
+
     print(f"[Debug] Absolute save path: {save_path}", flush=True)
     print(f"[Debug] Incoming filename: {file.filename}", flush=True)
 
-    # Save file
+    # Save uploaded file
     with open(save_path, "wb") as f:
         content = await file.read()
         f.write(content)
 
-    print(f"[Amy] Received new video: {filename}", flush=True)
+    print(f"[Amy] Received new video: {file.filename}", flush=True)
 
     # Process in background
     asyncio.create_task(async_process_video(save_path))
 
-    return {"message": "Upload successful", "filename": filename}
+    return {"message": "Upload successful", "filename": file.filename}
 
 
-async def async_process_video(video_path: str):
-    """Async wrapper for process_video."""
-    await asyncio.to_thread(process_video, video_path)
-
-
-# ---------------------
-# OPTIONAL: PERIODIC LOOP
-# ---------------------
+# Optional: periodic processing of existing videos
 async def periodic_processing_loop():
     while True:
         for filename in os.listdir(UPLOAD_FOLDER):
@@ -109,14 +113,6 @@ async def periodic_processing_loop():
         await asyncio.sleep(60)
 
 
-# ---------------------
-# MAIN
-# ---------------------
+# --- Run server ---
 if __name__ == "__main__":
-    uvicorn.run(
-        "data_processing_server:app",
-        host="0.0.0.0",
-        port=5050,
-        reload=True,  # Automatically reloads and prints are visible
-        log_level="info",
-    )
+    uvicorn.run(app, host="0.0.0.0", port=5050, log_level="info")
