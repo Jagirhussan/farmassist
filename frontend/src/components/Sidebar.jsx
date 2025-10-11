@@ -5,20 +5,19 @@ function Sidebar({ isOpen, toggleSidebar }) {
   const [showInfo, setShowInfo] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState("");
 
-  // Load the Amy Jetson URL from environment variables
   const AMY_JETSON_URL = process.env.REACT_APP_AMY_IP;
 
-  const handleNewChat = () => {
-    window.location.reload();
-  };
-
+  const handleNewChat = () => window.location.reload();
   const handleInfoClick = () => setShowInfo(true);
   const handleUploadClick = () => setShowUpload(true);
   const closeInfo = () => setShowInfo(false);
   const closeUpload = () => {
     setShowUpload(false);
     setSelectedFile(null);
+    setUploadMessage("");
   };
 
   const handleUploadSubmit = async () => {
@@ -26,6 +25,9 @@ function Sidebar({ isOpen, toggleSidebar }) {
       alert("Please select a file first");
       return;
     }
+
+    setIsUploading(true);
+    setUploadMessage("");
 
     const formData = new FormData();
     formData.append("file", selectedFile);
@@ -39,11 +41,12 @@ function Sidebar({ isOpen, toggleSidebar }) {
       if (!response.ok) throw new Error("Upload failed");
 
       const data = await response.json();
-      alert(`Upload successful: ${data.filename}`);
-      closeUpload();
+      setUploadMessage(`Upload complete: ${data.filename}`);
     } catch (err) {
       console.error(err);
-      alert("Error uploading video");
+      setUploadMessage("Error uploading video");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -81,7 +84,6 @@ function Sidebar({ isOpen, toggleSidebar }) {
           {isOpen && <span>Settings</span>}
         </div>
       </div>
-
       {/* Info Modal */}
       {showInfo && (
         <div className="modal-overlay">
@@ -98,27 +100,62 @@ function Sidebar({ isOpen, toggleSidebar }) {
           </div>
         </div>
       )}
-
       {/* Upload Modal */}
       {showUpload && (
         <div className="modal-overlay">
           <div className="modal">
             <h2>Upload Video</h2>
-            <p>Select a video file to upload.</p>
-            <input
-              type="file"
-              accept="video/*"
-              style={{ marginBottom: "15px" }}
-              onChange={(e) => setSelectedFile(e.target.files[0])}
-            />
-            <div style={{ display: "flex", gap: "10px" }}>
-              <button className="upload-button" onClick={handleUploadSubmit}>
-                Upload
-              </button>
-              <button className="close-button" onClick={closeUpload}>
-                Close
-              </button>
-            </div>
+
+            {!selectedFile && (
+              <input
+                type="file"
+                accept="video/*"
+                style={{ marginBottom: "15px" }}
+                onChange={(e) => setSelectedFile(e.target.files[0])}
+              />
+            )}
+
+            {selectedFile && (
+              <>
+                <div className="upload-status">
+                  {isUploading && <div className="spinner"></div>}
+                  <span>
+                    {isUploading
+                      ? "Uploading ..."
+                      : `Ready to upload: ${selectedFile.name}`}
+                  </span>
+                </div>
+
+                {uploadMessage && (
+                  <div className="upload-message">
+                    {uploadMessage}
+                    {uploadMessage.startsWith("Upload complete") && (
+                      <div className="upload-note">
+                        Please wait a few more minutes for the video to be fully
+                        processed.
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="upload-buttons">
+                  <button
+                    className="upload-button"
+                    onClick={handleUploadSubmit}
+                    disabled={isUploading}
+                  >
+                    Upload
+                  </button>
+                  <button
+                    className="close-button"
+                    onClick={closeUpload}
+                    disabled={isUploading}
+                  >
+                    Close
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

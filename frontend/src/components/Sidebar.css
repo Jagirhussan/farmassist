@@ -187,3 +187,59 @@
   width: 20px;
   height: 20px;
 }
+
+/* Spinner animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Center the Upload/Close buttons */
+.upload-buttons {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Green upload message */
+.upload-message {
+  font-size: 14px;
+  color: #2a7a2f; /* Green */
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Note under success message */
+.upload-note {
+  font-size: 12px;
+  color: #2a7a2f; /* Green */
+  margin-top: 5px;
+}
+
+.upload-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #66ab94;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
