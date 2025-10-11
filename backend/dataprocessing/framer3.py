@@ -70,6 +70,11 @@ def framer(video_path):
             embedded_response = model_encoder.encode(response)
             processed_data.append({"caption": response, "embedding": embedded_response})
 
+            # Debug print
+            print(
+                f"[Debug] Frame {frame_count}: {response} | Embedding length: {len(embedded_response)}"
+            )
+
         frame_count += 1
 
     video.release()
