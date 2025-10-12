@@ -112,7 +112,7 @@ def run_llm(prompt):
 
     try:
         # get the most relevant observation from the data and it's timestamp.
-        retrieved_texts, timestamp = retrieve_context(prompt, n=3, threshold=0.4)
+        retrieved_texts, timestamp = retrieve_context(prompt, n=3, threshold=0.3)
 
         # formated as: "At time <timestamp>, <observation>"
         if retrieved_texts is not None and timestamp is not None:
