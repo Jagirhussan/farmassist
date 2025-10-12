@@ -1,13 +1,9 @@
+from xmlrpc import client
 from fastapi import FastAPI, Request
 import chromadb
 from chromadb.config import Settings
 
 app = FastAPI()
-
-# Initialize ChromaDB with the new client configuration
-client = chromadb.PersistentClient(path="dataprocessing/video_db")
-    # get or create the collection
-collection = client.get_or_create_collection(name="video_frames")
 
 
 @app.post("/store_data")
@@ -15,14 +11,20 @@ async def store_data(request: Request):
     """
     Endpoint to receive and store processed data.
     """
+
+    # Initialize ChromaDB with the new client configuration
+    client = chromadb.PersistentClient(path="dataprocessing/video_db")
+    # get or create the collection
+    collection = client.get_or_create_collection(name="video_frames")
+
     try:
         data = await request.json()
 
         # Add data to ChromaDB
         for item in data:
             collection.add(
-                ids=[item["id"]],
-                metadatas=[{"caption": item["caption"]}],
+                ids=[item["ids"]],
+                documents=[item["documents"]],
                 embeddings=[item["embedding"]],
             )
         return {"message": "Data stored successfully"}
