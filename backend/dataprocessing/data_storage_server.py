@@ -5,7 +5,7 @@ from chromadb.config import Settings
 
 app = FastAPI()
 # Initialize ChromaDB with the new client configuration
-client = chromadb.PersistentClient(path="dataprocessing/video_db")
+client = chromadb.PersistentClient(path="./video_db")
 
 # get or create the collection
 collection = client.get_or_create_collection(name="video_frames")
@@ -26,9 +26,9 @@ async def store_data(request: Request):
             print(f"[Storage] Sample item: {item['ids']}, {item['documents']}, Embedding length: {len(item['embeddings'])}")
 
         # Add data to ChromaDB
-        ids = [item["id"] for item in data]
+        ids = [item["ids"] for item in data]
         embeddings = [item["embedding"] for item in data]
-        metadatas = [{"caption": item["caption"]} for item in data]
+        # metadatas = [{"caption": item["caption"]} for item in data]
         documents = [item["caption"] for item in data]
 
         print(f"[Storage] ids: {ids}")
