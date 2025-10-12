@@ -74,6 +74,7 @@ def framer(video_path):
 
             # embed the response and save it to a database.
             embedded_response = model_encoder.encode(response)
+            embedded_response = embedded_response.tolist()  # Convert to list for JSON serialization
             processed_data.append({
                 "id": timestamp_str,
                 "caption": response,
