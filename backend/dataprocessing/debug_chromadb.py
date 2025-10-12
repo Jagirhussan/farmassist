@@ -19,7 +19,7 @@ def inspect_chromadb():
             print(f"Item {i+1}:")
             print(f"  ID: {results['ids'][i]}")
             print(f"  Embedding: {results['embeddings'][i][:5]}...")
-            print(f"  Document: {results['documents'][i][:50]}...")
+            print(f"  Document: {results['documents'][i][:100]}...")
             print(f"  Metadata: {json.dumps(results['metadatas'][i], indent=2)}")
 
 
