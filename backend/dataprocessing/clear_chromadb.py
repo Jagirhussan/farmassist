@@ -15,8 +15,7 @@ def clear_chromadb():
         
         # Create a fresh collection with cosine distance
         collection = chroma_client.create_collection(
-            name="video_frames",
-            metadata={"hnsw:space": "cosine"}  # Use cosine distance
+            name="video_frames"
         )
         print("Created fresh 'video_frames' collection with cosine distance")
         
