@@ -31,6 +31,10 @@ async def store_data(request: Request):
         # metadatas = [{"caption": item["caption"]} for item in data]
         documents = data.get("documents", [])
 
+        print(ids)
+        print(embeddings[0:5])
+        print(documents)
+
         collection.add(
             ids=ids,
             embeddings=embeddings,
