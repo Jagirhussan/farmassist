@@ -56,6 +56,12 @@ def framer(video_path):
             break
 
         if frame_count % int(fps * 30) == 0:
+
+            # calculate the timestamp of the frame
+            seconds = frame_count / fps
+            frame_time = start_time + timedelta(seconds=seconds)
+            timestamp_str = frame_time.strftime("%Y-%m-%d_%H-%M-%S")
+
             # save the frame as a rbg array
             rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             image = Image.fromarray(rgb_frame)
@@ -68,11 +74,15 @@ def framer(video_path):
 
             # embed the response and save it to a database.
             embedded_response = model_encoder.encode(response)
-            processed_data.append({"caption": response, "embedding": embedded_response})
+            processed_data.append({
+                "id": timestamp_str,
+                "caption": response,
+                "embedding": embedded_response
+            })
 
             # Debug print
             print(
-                f"[Debug] Frame {frame_count}: {response} | Embedding length: {len(embedded_response)}"
+                f"[Debug] Frame {frame_count} @ {timestamp_str}: {response} | Embedding length: {len(embedded_response)}"
             )
 
         frame_count += 1

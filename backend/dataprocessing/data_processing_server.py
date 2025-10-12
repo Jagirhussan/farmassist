@@ -65,12 +65,12 @@ def process_video(video_path):
     """Process a video and send results to storage."""
     abs_path = os.path.abspath(video_path)
     print(f"[Amy] Processing video: {abs_path}", flush=True)
-    framer(abs_path)  # Call framer with absolute path
+    processed_data = framer(abs_path)
 
     data = {
-        "captions": framer.captions,
-        "embeddings": framer.embeddings,
-        "video_path": framer.video_path,
+        "id": [processed_data["id"][i] for i in range(len(processed_data["id"]))],
+        "captions": [processed_data["caption"][i] for i in range(len(processed_data["caption"]))],
+        "embeddings": [processed_data["embedding"][i] for i in range(len(processed_data["embedding"]))]
     }
     send_to_storage(data)
 
