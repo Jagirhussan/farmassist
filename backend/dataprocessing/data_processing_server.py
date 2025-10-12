@@ -67,11 +67,10 @@ def process_video(video_path):
     print(f"[Amy] Processing video: {abs_path}", flush=True)
     framer(abs_path)  # Call framer with absolute path
 
-    # Example data to send
     data = {
-        "video_path": abs_path,
-        "captions": ["Caption 1", "Caption 2"],  # replace with real captions
-        "embeddings": [[0.1, 0.2], [0.3, 0.4]],  # replace with real embeddings
+        "captions": framer.captions,
+        "embeddings": framer.embeddings,
+        "video_path": framer.video_path,
     }
     send_to_storage(data)
 
