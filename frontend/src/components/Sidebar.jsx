@@ -137,25 +137,29 @@ function Sidebar({ isOpen, toggleSidebar }) {
                     )}
                   </div>
                 )}
-
-                <div className="upload-buttons">
-                  <button
-                    className="upload-button"
-                    onClick={handleUploadSubmit}
-                    disabled={isUploading}
-                  >
-                    Upload
-                  </button>
-                  <button
-                    className="close-button"
-                    onClick={closeUpload}
-                    disabled={isUploading}
-                  >
-                    Close
-                  </button>
-                </div>
               </>
             )}
+
+            {/* Always show the Close button */}
+            <div
+              className="upload-buttons"
+              style={{ justifyContent: "center" }}
+            >
+              <button
+                className="upload-button"
+                onClick={handleUploadSubmit}
+                disabled={isUploading || !selectedFile}
+              >
+                Upload
+              </button>
+              <button
+                className="close-button"
+                onClick={closeUpload}
+                disabled={isUploading}
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
