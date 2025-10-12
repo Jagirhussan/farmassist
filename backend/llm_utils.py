@@ -61,7 +61,7 @@ def retrieve_context(query, n=3, threshold=0.5):
     data = retrieve_data()
     # calculate the similarities with the cosine similarity
     # similarities = model_encoder.similarity(np.array(data['embeddings'], dtype=np.float32), np.array(query_embedded, dtype=np.float32))
-
+    print(data)
     similarities = np.array(
         [
             dot(e, query_embedded) / (norm(e) * norm(query_embedded))
