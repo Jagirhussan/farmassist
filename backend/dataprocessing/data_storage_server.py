@@ -26,15 +26,15 @@ async def store_data(request: Request):
             print(f"[Storage] Sample item: {item['ids']}, {item['documents']}, Embedding length: {len(item['embeddings'])}")
 
         # Add data to ChromaDB
-        ids = [item['ids'] for item in data]
-        embeddings = [item["embedding"] for item in data]
-        metadatas = [{"caption": item["caption"]} for item in data]
-        documents = [item["caption"] for item in data]
+        ids = data.get("ids", [])
+        embeddings = data.get("embeddings", [])
+        # metadatas = [{"caption": item["caption"]} for item in data]
+        documents = data.get("documents", [])
 
         collection.add(
             ids=ids,
             embeddings=embeddings,
-            metadatas=metadatas,
+            # metadatas=metadatas,
             documents=documents
         )
         
