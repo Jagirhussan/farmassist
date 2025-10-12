@@ -5,7 +5,8 @@ from chromadb.config import Settings
 app = FastAPI()
 
 # Initialize ChromaDB with the new client configuration
-client = chromadb.PersistentClient(path="video_db")
+client = chromadb.PersistentClient(path="dataprocessing/video_db")
+    # get or create the collection
 collection = client.get_or_create_collection(name="video_frames")
 
 
@@ -16,16 +17,15 @@ async def store_data(request: Request):
     """
     try:
         data = await request.json()
-        captions = data.get("captions", [])
-        embeddings = data.get("embeddings", [])
-        video_path = data.get("video_path", "unknown")
+
+        results = data.get(include=['documents', 'embeddings', 'metadatas'])
 
         # Add data to ChromaDB
-        for i, caption in enumerate(captions):
+        for i, document in enumerate(results['documents']):
             collection.add(
-                documents=[caption],
-                embeddings=[embeddings[i]],
-                ids=[f"{video_path}_frame_{i}"],
+                documents=[document],
+                embeddings=[results['embeddings'][i]],
+                ids=[f"video_frame_{i}"],
             )
         return {"message": "Data stored successfully"}
     except Exception as e:

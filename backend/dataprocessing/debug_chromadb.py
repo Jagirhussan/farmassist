@@ -15,7 +15,7 @@ def inspect_chromadb():
 
         print(f"Total items in collection: {len(results['ids'])}")
 
-        for i in range(min(5, len(results['ids']))):
+        for i in range(min(20, len(results['ids']))):
             print(f"Item {i+1}:")
             print(f"  ID: {results['ids'][i]}")
             print(f"  Embedding: {results['embeddings'][i][:5]}...")
