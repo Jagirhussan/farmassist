@@ -35,7 +35,7 @@ async def store_data(request: Request):
         print(f"[Storage] embeddings: {embeddings[0:5]}")
         print(f"[Storage] documents: {documents}")
 
-        collection.add(
+        collection.upsert(
             ids=ids,
             embeddings=embeddings,
             # metadatas=metadatas,
