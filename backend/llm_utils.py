@@ -161,7 +161,7 @@ def run_llm(prompt):
             outputs = model.generate(
                 **inputs,
                 max_new_tokens=maxtokens,
-                temperature=0.7,
+                temperature=temp,
                 do_sample=True,
                 pad_token_id=tokenizer.eos_token_id,
                 eos_token_id=tokenizer.eos_token_id,
