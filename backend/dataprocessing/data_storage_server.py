@@ -28,9 +28,9 @@ async def store_data(request: Request):
         # Add data to ChromaDB
         for item in data:
             collection.add(
-                ids=[item["ids"]],
-                documents=[item["documents"]],
-                embeddings=[item["embedding"]],
+                ids=[item["ids"][0]],
+                documents=[item["documents"][0]],
+                embeddings=[item["embeddings"][0]],
             )
         return {"message": "Data stored successfully"}
     except Exception as e:
