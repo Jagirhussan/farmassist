@@ -22,8 +22,8 @@ async def store_data(request: Request):
         for i in range(len(data['id'])):
             collection.add(
                 id=[data[i]['id']],
-                caption=[data[i]['captions']],
-                embeddings=[data[i]['embeddings']],
+                caption=[data[i]['caption']],
+                embeddings=[data[i]['embedding']],
             )
         return {"message": "Data stored successfully"}
     except Exception as e:

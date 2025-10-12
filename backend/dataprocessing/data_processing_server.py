@@ -7,6 +7,7 @@ import uvicorn
 from framer3 import framer
 from dotenv import load_dotenv
 import asyncio
+import json
 
 # --- Load environment variables from .env ---
 env_path = os.path.join(os.path.dirname(__file__), "..", ".env")
@@ -67,12 +68,12 @@ def process_video(video_path):
     print(f"[Amy] Processing video: {abs_path}", flush=True)
     processed_data = framer(abs_path)
 
-    data = {
-        "id": [processed_data[i]["id"] for i in range(len(processed_data))],
-        "captions": [processed_data[i]["caption"] for i in range(len(processed_data))],
-        "embeddings": [processed_data[i]["embedding"] for i in range(len(processed_data))]
-    }
-    send_to_storage(data)
+    # data = {
+    #     "id": [processed_data[i]["id"] for i in range(len(processed_data))],
+    #     "captions": [processed_data[i]["caption"] for i in range(len(processed_data))],
+    #     "embeddings": [processed_data[i]["embedding"] for i in range(len(processed_data))]
+    # }
+    send_to_storage(json.dumps(processed_data))
 
 
 async def async_process_video(video_path):
