@@ -5,12 +5,7 @@ from chromadb.config import Settings
 app = FastAPI()
 
 # Initialize ChromaDB with the new client configuration
-client = chromadb.Client(
-    Settings(
-        persist_directory="./video_db",  # Directory to store the database
-        anonymized_telemetry=False,  # Disable telemetry (optional)
-    )
-)
+client = chromadb.PersistentClient(path="video_db")
 collection = client.get_or_create_collection(name="video_frames")
 
 
