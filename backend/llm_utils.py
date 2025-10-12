@@ -74,7 +74,7 @@ def retrieve_context(query, n=3, threshold=0.5):
     relevant_sims = np.array(np.sort(similarities)[::-1])
 
     # check which similarities are higher than a threshold (e.g., 0.5)
-    relevant_indices = np.where(relevant_sims > threshold)
+    relevant_indices = np.array(np.where(relevant_sims > threshold))
 
     # order the relevant indices by similarity score in descending order
     print(f"[LLM] Relevant indices (sorted): {relevant_indices}")
