@@ -68,9 +68,9 @@ def process_video(video_path):
     processed_data = framer(abs_path)
 
     data = {
-        "id": [processed_data["id"][i] for i in range(len(processed_data["id"]))],
-        "captions": [processed_data["caption"][i] for i in range(len(processed_data["caption"]))],
-        "embeddings": [processed_data["embedding"][i] for i in range(len(processed_data["embedding"]))]
+        "id": [processed_data[i]["id"] for i in range(len(processed_data))],
+        "captions": [processed_data[i]["caption"] for i in range(len(processed_data))],
+        "embeddings": [processed_data[i]["embedding"] for i in range(len(processed_data))]
     }
     send_to_storage(data)
 

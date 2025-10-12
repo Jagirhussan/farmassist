@@ -18,14 +18,12 @@ async def store_data(request: Request):
     try:
         data = await request.json()
 
-        results = data.get(include=['id', 'caption', 'embedding'])
-
         # Add data to ChromaDB
-        for i in range(len(results['id'])):
+        for i in range(len(data['id'])):
             collection.add(
-                id=[results['id'][i]],
-                caption=[results['caption'][i]],
-                embeddings=[results['embedding'][i]],
+                id=[data[i]['id']],
+                caption=[data[i]['captions']],
+                embeddings=[data[i]['embeddings']],
             )
         return {"message": "Data stored successfully"}
     except Exception as e:
