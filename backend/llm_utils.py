@@ -52,7 +52,7 @@ def retrieve_data():
     return collection.get(include=["documents", "embeddings"])
 
 
-def retrieve_context(query, n=3, threshold=0.5):
+def retrieve_context(query, n=3, threshold=0.3):
     """Retrieve relevant context from ChromaDB based on the query."""
     print(f"[LLM] Retrieving context for query: {query}")
     # embed the query to the same format as the stored embeddings
@@ -77,7 +77,7 @@ def retrieve_context(query, n=3, threshold=0.5):
     relevant_indices = np.array(np.where(relevant_sims > threshold))
 
     # order the relevant indices by similarity score in descending order
-    print(f"[LLM] Relevant indices (sorted): {relevant_indices}")
+    print(f"[LLM] Relevant indices (sorted): {relevant_sims}")
 
     # retrieve the most similar frames to be the context with a max of n items
     if relevant_indices.size > 0:
