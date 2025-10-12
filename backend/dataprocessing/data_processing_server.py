@@ -73,7 +73,7 @@ def process_video(video_path):
     #     "captions": [processed_data[i]["caption"] for i in range(len(processed_data))],
     #     "embeddings": [processed_data[i]["embedding"] for i in range(len(processed_data))]
     # }
-    send_to_storage(json.dumps(processed_data))
+    send_to_storage(processed_data)
 
 
 async def async_process_video(video_path):
