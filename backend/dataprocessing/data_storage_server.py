@@ -7,7 +7,7 @@ app = FastAPI()
 # Initialize ChromaDB with the new client configuration
 client = chromadb.Client(
     Settings(
-        persist_directory="./chroma_storage",  # Directory to store the database
+        persist_directory="./video_db",  # Directory to store the database
         anonymized_telemetry=False,  # Disable telemetry (optional)
     )
 )
