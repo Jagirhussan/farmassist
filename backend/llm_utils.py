@@ -117,12 +117,13 @@ def run_llm(prompt):
         # formated as: "At time <timestamp>, <observation>"
         if retrieved_texts is not None and timestamp is not None:
             context = [
-                f"At time {ts}, {text}. " for ts, text in zip(timestamp, retrieved_texts)
+                f"At time {ts}, {text}." for ts, text in zip(timestamp, retrieved_texts)
             ]
+            context = " ".join(context)
             maxtokens = 100  # set a higher max token limit when context is available
             temp = 0.7  # set a higher temperature for more creative responses
         else:
-            context = ["Provide a concise and friendly answer to the query."]
+            context = "Provide a concise and friendly answer to the query."
             maxtokens = 60  # enforce a concise answer when no context is available
             temp = 0.4  # lower temperature for more deterministic answers
 
