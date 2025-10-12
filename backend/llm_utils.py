@@ -71,25 +71,26 @@ def retrieve_context(query, n=3, threshold=0.5):
 
     print(f"[LLM] Similarities: {similarities}")
 
+    relevant_sims = np.array(np.sort(similarities)[::-1])
+
     # check which similarities are higher than a threshold (e.g., 0.5)
-    relevant_indices = np.where(similarities > threshold)
+    relevant_indices = np.where(relevant_sims > threshold)
 
     # order the relevant indices by similarity score in descending order
-    relevant_indices_sorted = np.array(np.sort(relevant_indices[0])[::-1])
-    print(f"[LLM] Relevant indices (sorted): {relevant_indices_sorted}")
+    print(f"[LLM] Relevant indices (sorted): {relevant_indices}")
 
     # retrieve the most similar frames to be the context with a max of n items
-    if relevant_indices_sorted.size > 0:
+    if relevant_indices.size > 0:
         # ensure if n is larger than available relevant indices, we don't exceed bounds
-        if n > len(relevant_indices_sorted):
-            n = len(relevant_indices_sorted)
+        if n > len(relevant_indices):
+            n = len(relevant_indices)
 
         data["documents"] = np.array(data["documents"])
         data["ids"] = np.array(data["ids"])
 
         retrieved, timestamp = (
-            data["documents"][relevant_indices_sorted[:n]],
-            data["ids"][relevant_indices_sorted[:n]],
+            data["documents"][relevant_indices[:n]],
+            data["ids"][relevant_indices[:n]],
         )
         print(
             f"[LLM] Successfully retrieved context: {retrieved}, timestamp: {timestamp}"
@@ -111,12 +112,12 @@ def run_llm(prompt):
 
     try:
         # get the most relevant observation from the data and it's timestamp.
-        retrieved_texts, timestamp = retrieve_context(prompt, n=3, threshold=0.01)
+        retrieved_texts, timestamp = retrieve_context(prompt, n=3, threshold=0.4)
 
         # formated as: "At time <timestamp>, <observation>"
         if retrieved_texts is not None and timestamp is not None:
             context = [
-                f"At time {ts}, {text}" for ts, text in zip(timestamp, retrieved_texts)
+                f"At time {ts}, {text}. " for ts, text in zip(timestamp, retrieved_texts)
             ]
             maxtokens = 100  # set a higher max token limit when context is available
             temp = 0.7  # set a higher temperature for more creative responses
