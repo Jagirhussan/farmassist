@@ -6,6 +6,7 @@ import chromadb
 import numpy as np
 from numpy import dot
 from numpy.linalg import norm
+import time
 
 # Global variables to store the model (loaded once)
 tokenizer = None
@@ -102,46 +103,38 @@ def retrieve_context(query, n=3, threshold=0.3):
 
 
 def run_llm(prompt):
-    """Process a prompt with the loaded LLM model, optionally with video context"""
     device = torch.device("cuda")
-
     print(f"[LLM] Processing prompt: {prompt}")
-
-    maxtokens = None
-    temp = None
+    start_time = time.time()
 
     try:
-        # get the most relevant observation from the data and it's timestamp.
         retrieved_texts, timestamp = retrieve_context(prompt, n=3, threshold=0.3)
 
-        # formated as: "At time <timestamp>, <observation>"
-        if retrieved_texts is not None and timestamp is not None:
-            context = [
-                f"At time {ts}, {text}." for ts, text in zip(timestamp, retrieved_texts)
-            ]
-            context = " ".join(context)
-            maxtokens = 100  # set a higher max token limit when context is available
-            temp = 0.7  # set a higher temperature for more creative responses
+        if retrieved_texts is not None:
+            context = " ".join(
+                [
+                    f"At time {ts}, {text}."
+                    for ts, text in zip(timestamp, retrieved_texts)
+                ]
+            )
+            maxtokens, temp = 100, 0.7
         else:
             context = "Provide a concise and friendly answer to the query."
-            maxtokens = 60  # enforce a concise answer when no context is available
-            temp = 0.4  # lower temperature for more deterministic answers
+            maxtokens, temp = 60, 0.4
 
-        # Format as chat messages for TinyLlama with system message
         messages = [
             {
                 "role": "system",
-                "content": "You are an extremely kind and helpful AI assistant specalised in animal farming."
-                "Provide one answer using the provided context shown to you in a video, provided in the context, if there is any available. "
-                "Only answer the query asked by the user. "
-                "Do NOT make up information. Never lie. If you don't know, do not attempt to answer. "
-                "Provide a concise answer. "
-                f"Your observed this context over video: {context}",
+                "content": (
+                    "You are an AI assistant specialised in animal farming. "
+                    "Use the provided context if available. "
+                    "Do not make up information. "
+                    f"Video context: {context}"
+                ),
             },
             {"role": "user", "content": prompt},
         ]
 
-        # Apply chat template
         inputs = tokenizer.apply_chat_template(
             messages,
             add_generation_prompt=True,
@@ -150,13 +143,7 @@ def run_llm(prompt):
             return_tensors="pt",
         ).to(device)
 
-        # Set default values if not provided
-        if maxtokens is None:
-            maxtokens = 100  # default value if not set
-        if temp is None:
-            temp = 0.7  # default value if not set
-
-        # Generate response
+        # Generate once with scores
         with torch.no_grad():
             outputs = model.generate(
                 **inputs,
@@ -165,12 +152,29 @@ def run_llm(prompt):
                 do_sample=True,
                 pad_token_id=tokenizer.eos_token_id,
                 eos_token_id=tokenizer.eos_token_id,
+                output_scores=True,
+                return_dict_in_generate=True,
             )
 
-        # Decode only the new tokens (response)
-        response = tokenizer.decode(
-            outputs[0][inputs["input_ids"].shape[1] :], skip_special_tokens=True
-        )
+        generated_tokens = outputs.sequences[0][inputs["input_ids"].shape[1] :]
+        response = tokenizer.decode(generated_tokens, skip_special_tokens=True)
+
+        # Confidence estimation
+        scores = torch.stack(outputs.scores)
+        probs = torch.nn.functional.softmax(scores, dim=-1)
+        token_confidences = probs.max(dim=-1).values
+        avg_confidence = token_confidences.mean().item()
+
+        latency = round(time.time() - start_time, 2)
+        num_tokens = len(generated_tokens)
+        context_items = len(retrieved_texts) if retrieved_texts else 0
+
+        # print all metrics to server logs
+        print(f"[LLM] Response: {response.strip()}")
+        print(f"[LLM] Confidence: {avg_confidence:.3f}")
+        print(f"[LLM] Tokens generated: {num_tokens}")
+        print(f"[LLM] Latency: {latency}s")
+        print(f"[LLM] Context items used: {context_items}")
 
         return response.strip()
 
