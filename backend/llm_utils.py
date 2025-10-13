@@ -83,7 +83,7 @@ def retrieve_context(query, n=3, threshold=0.3):
     print(f"[LLM] Relevant indices (sorted): {top_n_indices}")
 
     # retrieve the most similar frames to be the context with a max of n items
-    if top_n_indices.size > 0:
+    if len(top_n_indices) > 0:
         # ensure if n is larger than available relevant indices, we don't exceed bounds
         if n > len(top_n_indices):
             n = len(top_n_indices)
