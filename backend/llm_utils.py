@@ -132,9 +132,7 @@ def run_llm(prompt):
             {
                 "role": "system",
                 "content": (
-                    "You are an AI assistant specialised in animal farming. "
-                    "Use the provided context if available. "
-                    "Do not make up information. "
+                    "You are an AI assistant specialized in animal farming. Always provide concise and accurate answers based on the context provided. If the answer is not known, clearly state that you do not know. Include timestamps from the video context whenever possible. The videos are from New Zealand, so consider Maori culture and local farming practices when relevant. Do not invent information or make assumptions beyond the context. Focus only on answering the user’s question using the information available."
                     f"Video context: {context}"
                 ),
             },
