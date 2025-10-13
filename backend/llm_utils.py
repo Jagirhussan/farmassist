@@ -79,6 +79,10 @@ def retrieve_context(query, n=3, threshold=0.3):
 
     top_n_indices = filtered_indices[:n]
 
+    top_similarities = [similarities[i] for i in top_n_indices]
+    print(f"[LLM] Relevant indices (sorted): {top_n_indices}")
+    print(f"[LLM] Similarity scores of top relevant contexts: {top_similarities}")
+
     # order the relevant indices by similarity score in descending order
     print(f"[LLM] Relevant indices (sorted): {top_n_indices}")
 
