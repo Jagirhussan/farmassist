@@ -68,7 +68,7 @@ def framer(video_path):
             inputs = processor(images=image, return_tensors="pt").to(device)
 
             with torch.no_grad():
-                output = model.generate(**inputs, max_new_tokens=50)
+                output = model.generate(**inputs, max_new_tokens=150, temperature=0.8)
                 response = processor.decode(output[0], skip_special_tokens=True)
 
             # embed the response and save it to a database.
