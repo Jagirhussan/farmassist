@@ -169,7 +169,11 @@ def run_llm(prompt):
 
         latency = round(time.time() - start_time, 2)
         num_tokens = len(generated_tokens)
-        context_items = len(retrieved_texts) if retrieved_texts else 0
+        context_items = (
+            len(retrieved_texts)
+            if retrieved_texts is not None and len(retrieved_texts) > 0
+            else 0
+        )
 
         # print the system prompt for debugging
         print(f"[LLM] System prompt:\n{messages[0]['content']}")
