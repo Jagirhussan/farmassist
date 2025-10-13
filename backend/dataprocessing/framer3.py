@@ -54,7 +54,7 @@ def framer(video_path):
         if not ret:
             break
 
-        if frame_count % int(fps * 30) == 0:
+        if frame_count % int(fps * 5) == 0:
 
             # calculate the timestamp of the frame
             seconds = frame_count / fps
