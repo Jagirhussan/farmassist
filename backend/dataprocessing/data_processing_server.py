@@ -3,8 +3,9 @@ import re
 import requests
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 import uvicorn
-from framer3 import framer
+from framer3 import framer, load_models
 from dotenv import load_dotenv
 import asyncio
 import json
@@ -27,8 +28,13 @@ print(
 )
 print(f"[Debug] Current working directory: {os.getcwd()}", flush=True)
 
-# --- FastAPI app ---
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Load models at start up
+    load_models()
+    yield
+
+app = FastAPI(lifespan=lifespan)
 
 # Allow CORS from frontend
 app.add_middleware(
