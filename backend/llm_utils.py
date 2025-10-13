@@ -169,12 +169,15 @@ def run_llm(prompt):
         num_tokens = len(generated_tokens)
         context_items = len(retrieved_texts) if retrieved_texts else 0
 
+        # print the system prompt for debugging
+        print(f"[LLM] System prompt:\n{messages[0]['content']}")
         # print all metrics to server logs
         print(f"[LLM] Response: {response.strip()}")
         print(f"[LLM] Confidence: {avg_confidence:.3f}")
         print(f"[LLM] Tokens generated: {num_tokens}")
         print(f"[LLM] Latency: {latency}s")
         print(f"[LLM] Context items used: {context_items}")
+        print(f"[LLM] Temperature: {temp}")
 
         return response.strip()
 
