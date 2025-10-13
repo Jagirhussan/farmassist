@@ -21,7 +21,7 @@ def load_models():
     """Load the LLM, database, and caption encoding models once when the server starts"""
     global processor, model, db, model_encoder
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cpu")
 
     if processor is None or model is None or db is None or model_encoder is None:
         processor = BlipProcessor.from_pretrained(
@@ -42,7 +42,7 @@ def framer(video_path):
 
     # initialise the model
     load_models()
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cpu")
 
     # initialise the time
     start_time = get_video_creation_time(video_path)
