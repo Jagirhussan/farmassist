@@ -40,8 +40,7 @@ def framer(video_path):
     fps = video.get(cv2.CAP_PROP_FPS)
     frame_count = 0
 
-    # initialise the model
-    load_models()
+    # initialise the model location
     device = torch.device("cpu")
 
     # initialise the time
