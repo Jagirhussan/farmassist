@@ -19,8 +19,7 @@ async def store_data(request: Request):
 
     try:
         data = await request.json()
-
-        print(f"[Storage] Received data: {data}")
+        
         print(f"[Storage] Storing {len(data)} items to ChromaDB...")
         for item in data[0:1]:
             print(f"[Storage] Sample item: {item['ids']}, {item['documents']}, Embedding length: {len(item['embeddings'])}")
