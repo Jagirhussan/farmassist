@@ -128,11 +128,14 @@ def run_llm(prompt):
             context = "Provide a concise and friendly answer to the query."
             maxtokens, temp = 60, 0.4
 
+        # hardcode temp for testing!!!!!
+        temp = 0.25
+
         messages = [
             {
                 "role": "system",
                 "content": (
-                    "You are an AI assistant specialized in animal farming. Always provide concise and accurate answers based on the context provided. If the answer is not known, clearly state that you do not know. Include timestamps from the video context whenever possible. The videos are from New Zealand, so consider Maori culture and local farming practices when relevant. Do not invent information or make assumptions beyond the context. Focus only on answering the user’s question using the information available. Think through the problem step by step before giving your final answer. Explain your reasoning clearly and logically, showing how you arrived at your conclusion based on the context provided."
+                    "You are an AI assistant specialized in animal farming. Always provide concise and accurate answers based on the context provided. If the answer is not known, clearly state that you do not know. Include timestamps from the video context whenever possible. The videos are from New Zealand, so consider Maori culture and local farming practices when relevant. Do not invent information or make assumptions beyond the context. Focus only on answering the user’s question using the information available. Think through the problem step by step before giving your final answer. Explain your reasoning clearly and logically, showing how you arrived at your conclusion based on the context provided. Example Questions and answers: Q: What colour are the cows in the field? A: There is one black and white and one brown cow in the field at time 2025-07-05_15-36-25. Q: How many pigs are seen in the field? A: No pigs are seen in the field, but multiple cows are seen at time 2025-07-05_15_26-23. Q: What are the cows doing in the video? A: The cows at time 2025-07-05_15_26-23 are grazing and the cows at time 2025-07-05_15_35-23 are walking to the cattle shed"
                     f"Video context: {context}"
                 ),
             },
