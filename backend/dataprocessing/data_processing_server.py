@@ -9,6 +9,7 @@ from framer3 import framer, load_models
 from dotenv import load_dotenv
 import asyncio
 import json
+import time
 
 # --- Load environment variables from .env ---
 env_path = os.path.join(os.path.dirname(__file__), "..", ".env")
@@ -31,7 +32,10 @@ print(f"[Debug] Current working directory: {os.getcwd()}", flush=True)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Load models at start up
+    start_time = time.time()
     load_models()
+    end_time = time.time()
+    print(f"[Data] Models loaded in {end_time - start_time:.2f} seconds", flush=True)
     yield
 
 app = FastAPI(lifespan=lifespan)
@@ -71,14 +75,12 @@ def send_to_storage(data):
 def process_video(video_path):
     """Process a video and send results to storage."""
     abs_path = os.path.abspath(video_path)
-    print(f"[Amy] Processing video: {abs_path}", flush=True)
+    print(f"[Data] Processing video: {abs_path}", flush=True)
+    start_time = time.time()
     processed_data = framer(abs_path)
+    end_time = time.time()
+    print(f"[Data] Video processed in {end_time - start_time:.2f} seconds", flush=True)
 
-    # data = {
-    #     "id": [processed_data[i]["id"] for i in range(len(processed_data))],
-    #     "captions": [processed_data[i]["caption"] for i in range(len(processed_data))],
-    #     "embeddings": [processed_data[i]["embedding"] for i in range(len(processed_data))]
-    # }
     send_to_storage(processed_data)
 
 
