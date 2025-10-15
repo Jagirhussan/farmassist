@@ -129,7 +129,7 @@ def run_llm(prompt):
             maxtokens, temp = 60, 0.4
 
         # hardcode temp for testing!!!!!
-        temp = 0.75
+        temp = 1.0
 
         messages = [
             {
