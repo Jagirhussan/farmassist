@@ -11,3 +11,5 @@ To run Farm Assist, read the research compendium provided to you.
 **'./frontend':** This is where the frontend and UI code is stored. This folder is run on your laptop.
 
 **'./backend/dataprocessing':** Within this file are the scripts needed to process teh data, run the necessary servers for data processing, and some debug functions to erase and print the vector databse. The vector database "video_db" is also stored in this folder. There are also some debug scripts such as debug_chromadb.py, and clear_chromadb.py
+
+Note: llm_server.py is a redundant server. 
